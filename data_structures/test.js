@@ -1,0 +1,17 @@
+const { linkList } = require('./link_list.js')
+
+let list = new linkList()
+list.append(2)
+list.append(3)
+list.prepend(1)
+list.append(4)
+console.log(list.locateNode(3), 'locate')
+console.log(list.listLength(), 'length')
+console.log(list.getNode(2), 'getNode 2')
+list.insertNode(5, 3)
+list.insertNode(0, 4)
+list.delNodeByIndex(2)
+list.delNodeByValue(1)
+console.log(list.toArrary())
+console.log(list, 'list')
+

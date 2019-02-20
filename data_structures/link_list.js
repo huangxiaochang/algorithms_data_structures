@@ -1,4 +1,4 @@
-import { Comparator } from '../util.js'
+const { Comparator } = require('../util.js')
 
 class linkListNode {
 	constructor(value, next=null) {
@@ -15,10 +15,7 @@ class linkList {
 		this.head = null
 		this.tail = null
 		this.length = 0
-		this.compare = new Comparator(compareFn)
-	}
-	static isValidIndex (i) {
-		return i <= this.length && i >= 1
+		this.compare = (new Comparator(compareFn)).compare
 	}
 	/*
 		return linkList length
@@ -67,12 +64,15 @@ class linkList {
 	locateNode(value, compareFn) {
 		let index = -1
 		compareFn = compareFn || this.compare
-		let h = this.h
-		while(h && compareFn(h.value, value) !== 0) {
+		let h = this.head
+		while(h) {
+			index += 1
+			if (compareFn(h.value, value) === 0) {
+				break
+			}
 			h = h.next
-			index++
 		}
-		return index
+		return index + 1
 	}
 	/*
 		get a node from a linklist
@@ -80,10 +80,11 @@ class linkList {
 		@retrun value || undefined
 	*/
 	getNode(i) {
-		if (!linkList.isValidIndex(i)) {
+		if (i < 1 || i > this.length) {
 			return undefined
 		}
-		let h = this.h
+
+		let h = this.head
 		let index = 1
 		while(h && index < i) {
 			h = h.next
@@ -102,7 +103,7 @@ class linkList {
 		if (this.isEmpty()) {
 			throw new Error('linkList not exist')
 		}
-		if (!linkList.isValidIndex(i)) {
+		if (i < 1 || i > this.length) {
 			throw new Error('insert place outside linkList range')
 		}
 		let cur_node = this.getNode(i)
@@ -124,7 +125,7 @@ class linkList {
 		if (this.isEmpty()) {
 			throw new Error('linkList not exist')
 		}
-		if (!linkList.isValidIndex(i)) {
+		if (i < 1 || i > this.length) {
 			throw new Error('del place outside linkList range')
 		}
 		let del_node = null
@@ -185,7 +186,20 @@ class linkList {
 		
 		return this
 	}
+	toArrary () {
+		const arr = []
+		let h = this.head
+		while(h) {
+			arr.push(h.value)
+			h = h.next
+		}
+		return arr
+	}
 }
 
-export LinkListNode
-export default linkList
+// export LinkListNode
+// export default linkList
+module.exports = {
+	linkListNode,
+	linkList
+}
