@@ -1,28 +1,28 @@
 const { linkList } = require('../linkList/link_list.js')
 
-class Queue {
+class Stack {
 	constructor () {
-		this.queue = new linkList()
+		this.stack = new linkList()
 	}
 
 	isEmpty () {
-		return (this.queue.head === null)
+		return (this.stack.head === null)
 	}
 
 	/*
 		@params value *
-		@return queue
+		@return stack
 	 */
-	enqueue (value)	 {
-		this.queue.append(value)
+	push (value)	 {
+		this.stack.append(value)
 		return this
 	}
 	
-	dequeue () {
+	pop () {
 		if (this.isEmpty()) {
 			return null
 		}
-		let del_node = this.queue.delNodeByIndex(1)
+		let del_node = this.stack.delNodeByIndex(this.stack.length)
 		return del_node.value
 	}
 
@@ -30,15 +30,15 @@ class Queue {
 		if (this.isEmpty()) {
 			return null
 		}
-		let first_node = this.queue.head
+		let first_node = this.stack.tail
 		return first_node.value
 	}
 
 	toString (printFn) {
-		return (printFn ? printFn(this.queue) : this.queue.toArrary())
+		return (printFn ? printFn(this.stack) : this.stack.toArrary())
 	}
 }
 
 module.exports = {
-	Queue
+	Stack
 }
