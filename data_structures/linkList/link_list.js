@@ -67,12 +67,30 @@ class linkList {
 		let h = this.head
 		while(h) {
 			index += 1
-			if (compareFn(h.value, value) === 0) {
+			if (compareFn(value, h.value) === 0) {
 				break
 			}
 			h = h.next
 		}
 		return index + 1
+	}
+	/*
+		find a node from a linklist
+		@params value 
+		@retrun listNode
+	*/
+	findNode(value, compareFn) {
+		let index = -1
+		compareFn = compareFn || this.compare
+		let h = this.head
+		while(h) {
+			index += 1
+			if (compareFn(value, h.value) === 0) {
+				break
+			}
+			h = h.next
+		}
+		return index === -1 ? null : h
 	}
 	/*
 		get a node from a linklist
@@ -123,19 +141,19 @@ class linkList {
 	*/
 	delNodeByIndex(i) {
 		if (this.isEmpty()) {
-			throw new Error('linkList not exist')
+			return false
 		}
 		if (i < 1 || i > this.length) {
-			throw new Error('del place outside linkList range')
+			return false
 		}
 		let del_node = null
 		if (this.length === 1) {
+			del_node = this.head.value
 			this.head = null
 			this.tail = null
-			del_node = this.head.value
 		} else if (i === 1) {
-			this.head = this.head.next
 			del_node = this.head.value
+			this.head = this.head.next
 		} else {
 			let h = this.head
 			let index = 1
@@ -143,11 +161,11 @@ class linkList {
 				h = h.next
 				index++
 			}
-			h.next = h.next.next
 			if (i === this.length) {
 				this.tail = h
 			}
-			del_node = h.value
+			del_node = h.next.value
+			h.next = h.next.next
 		}
 
 		this.length--
@@ -161,13 +179,15 @@ class linkList {
 	*/
 	delNodeByValue (value, compareFn) {
 		if (this.isEmpty()) {
-			throw new Error('linkList not exist')
+			return false
 		}
 		compareFn = compareFn || this.compare
+		let del_node = null
 		if (compareFn(value, this.head.value) === 0) {
 			if (this.tail === this.head) {
 				this.tail = null
 			}
+			del_node = this.head.value
 			this.head = this.head.next
 			this.length--
 		} else {
@@ -179,12 +199,12 @@ class linkList {
 				if (h.next === this.tail) {
 					this.tail = h
 				}
+				del_node = h.next.value
 				h.next = h.next.next
 			}
 			this.length--
 		}
-		
-		return this
+		return del_node
 	}
 	toArrary () {
 		const arr = []
