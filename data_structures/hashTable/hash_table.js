@@ -16,7 +16,14 @@ class HashTable {
 	}
 
 	set(key, value) {
-		const node = this._getNode(key)
+		const hashKey = this.hash(key)
+		const nodeList = this.buckets[hashKey]
+		const node = nodeList.findNode(key, (a, b) => {
+			if (a === b.key) {
+				return 0
+			}
+			return -1
+		})
 		if (node) {
 			node.value.value = value
 		} else {
