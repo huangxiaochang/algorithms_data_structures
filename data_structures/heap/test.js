@@ -1,0 +1,1 @@
+console.log(Math.log(16) / Math.log(2))
