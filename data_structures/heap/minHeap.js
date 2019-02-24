@@ -1,6 +1,6 @@
 const { Heap } =  require('./heap.js')
 
-class minHeap extends Heap {
+class MinHeap extends Heap {
 	constructor (compareFn) {
 		super(compareFn)
 	}
@@ -13,5 +13,5 @@ class minHeap extends Heap {
 }
 
 module.exports = {
-	minHeap
+	MinHeap
 }

@@ -1,8 +1,8 @@
-const { minHeap } = require('./minHeap.js')
-const { maxHeap } = require('./maxHeap.js')
+const { MinHeap } = require('./minHeap.js')
+const { MaxHeap } = require('./maxHeap.js')
 
-const min_heap = new minHeap()
-const max_heap = new maxHeap()
+const min_heap = new MinHeap()
+const max_heap = new MaxHeap()
 
 max_heap.heap = [10, 7, 8, 5, 1, 4, 6, 2, 3]
 max_heap.insert(16)

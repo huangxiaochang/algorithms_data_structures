@@ -1,6 +1,6 @@
 const { Heap } =  require('./heap.js')
 
-class maxHeap extends Heap {
+class MaxHeap extends Heap {
 	constructor (compareFn) {
 		super(compareFn)
 	}
@@ -13,5 +13,5 @@ class maxHeap extends Heap {
 }
 
 module.exports = {
-	maxHeap
+	MaxHeap
 }
