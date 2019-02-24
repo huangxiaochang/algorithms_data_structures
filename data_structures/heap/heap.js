@@ -5,9 +5,9 @@ const { Comparator } = require('../../util.js')
 
 class Heap {
 	constructor(compareFn) {
-		// if (new.target === Heap) {
-		// 	throw new Error('Cannot construct Heap instance directly')
-		// }
+		if (new.target === Heap) {
+			throw new Error('Cannot construct Heap instance directly')
+		}
 		this.heap = []
 		this.compare = (new Comparator(compareFn)).compare
 	}
@@ -97,24 +97,52 @@ class Heap {
 		if (this.heap.length > 1) {
 			this.heapifyUp()
 		}
+		return this
 	}
 
-	remove (value, compareFn = this.compare) {
-		let pos = this.find(value, compare)
+	remove (value) {
+		let pos = this.find(value)
+		if (pos === this.heap.length - 1) {
+			let return_val = this.heap[pos]
+			this.heap.pop()
+			return return_val
+		}
 		if (pos !== false) {
-			if (pos === this.heap.length - 1) {
-				this.heap.pop()
+			let return_val = this.heap[pos]
+			this.heap[pos] = this.heap[this.heap.length - 1]
+			this.heap.pop()
+			if (this.isCorrectOrder(this.heap[pos], return_val)) {
+				this.heapifyUp(pos)
 			} else {
-
+				this.heapifyDown(pos)
 			}
 		}
+		return null
 	}
 
 	heapifyUp (customIndex = (this.heap.length - 1)) {
 		let current_index = customIndex
 		while (this.hasParent(current_index) && !this.isCorrectOrder(this.getParent(current_index), this.heap[current_index])) {
-			this.swap(this.getParent(current_index))
-			current_index = this.getParentIndex(current_index)
+			let parentIndex = this.getParentIndex(current_index)
+			this.swap(parentIndex, current_index)
+			current_index = parentIndex
+		}
+	}
+
+	heapifyDown (customIndex = 0) {
+		let current_index = customIndex
+		while(this.hasLeftChild(current_index) && this.hasRightChild(current_index)) {
+			let left = this.getLeftChild(current_index)
+			let right = this.getRightChild(current_index)
+			if (this.isCorrectOrder(left, right)) {
+				let leftIndex = this.getLeftChildIndex(current_index)
+				this.swap(current_index, leftIndex)
+				current_index = leftIndex
+			} else {
+				let rightIndex = this.getRightChildIndex(current_index)
+				this.swap(current_index, rightIndex)
+				current_index = rightIndex
+			}
 		}
 	}
 
@@ -129,31 +157,8 @@ class Heap {
 		return this.heap.length === 0 ? null : this.heap.toString()
 	}
 
-	printTree () {
-		if (this.heap.length === 0) {
-			console.log(null)
-		}
-		let len = this.heap.length
-		let totalLevel = Math.floor(Math.log(len) / Math.log(2)) + 1
-		let str = ''
-		let cur_level = 0
-		for(let i = 0; i < len; i++) {
-			let level = Math.floor(Math.log(i + 1) / Math.log(2)) + 1
-			if (level !== cur_level) {
-				str += '\n'
-				let space = 2 * (totalLevel - level)
-				str += ' '.repeat(space)
-				cur_level = level
-			}
-			let sp = 0
-			if (i === 0) {
-				sp = 3
-			} else {
-				sp = i % 2 === 0 ? 6 : 2
-			}
-			str += ' '.repeat(sp) + this.heap[i]
-		}
-		console.log(str)
+	toArray () {
+		return this.heap
 	}
 }
 
