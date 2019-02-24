@@ -2,13 +2,13 @@ const { Comparator } = require('../../util.js')
 const { HashTable } =require('../hashTable/hash_table.js')
 
 class BinaryTreeNode {
-	constructor(value=null) {
+	constructor(value=null, compareFn) {
 		this.value = value
 		this.parent = null
 		this.left = null
 		this.right = null
 		this.meta = new HashTable()
-		this.nodeCompareFn = (new Comparator()).compareFn
+		this.nodeCompareFn = (new Comparator(compareFn)).compareFn
 	}
 	
 	setValue(value) {
