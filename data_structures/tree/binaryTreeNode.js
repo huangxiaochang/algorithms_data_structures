@@ -75,6 +75,26 @@ class BinaryTreeNode {
 		targetNode.setRightChild(sourceNode.right)
 		targetNode.meta = sourceNode.meta
 	}
+
+	traverseInOrder () {
+		let traverse = []
+
+		if (this.left) {
+			traverse = traverse.concat(this.left.traverseInOrder())
+		}
+
+		traverse.push(this.value)
+
+		if (this.right) {
+			traverse = traverse.concat(this.right.traverseInOrder())
+		}
+
+		return traverse
+	}
+
+	toString () {
+		return this.traverseInOrder().toString()
+	}
 }
 
 module.exports = {

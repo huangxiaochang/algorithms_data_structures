@@ -21,6 +21,12 @@ class BinarySearchTree {
 	toString() {
 		return this.root.toString()
 	}
+
+	destory() {
+		this.root = null
+		this.nodeCompareFn = null
+		return true
+	}
 }
 
 module.exports = {
