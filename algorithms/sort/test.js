@@ -12,11 +12,11 @@ function generateArr (size=10, start=0, end=100) {
 }
 
 function compareFn (a, b) {
-	return a <= b ? true : false
+	return a >= b ? true : false
 }
 
-// let arr = generateArr(6)
-let arr = [100,49,38,65,97,76,13,27]
+let arr = generateArr(10)
+// let arr = [100,49,38,65,97,76,13,27]
 
 // const sort_method = new BubbleSort(compareFn)
 

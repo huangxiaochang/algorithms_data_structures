@@ -10,16 +10,15 @@ class QuickSortInPlace {
 	partition(arr, low, high) {
 		// 标记为是最值时，还有问题
 		let pivot = arr[low]
+
 		while(low < high) {
-			while(arr[high] >= pivot && low < high) {
-			// while(low < high && this.compare(arr[high], pivot)) {
+			while(low < high && this.compare(arr[high], pivot)) {
 				high--
 			}
 			if (low < high) {
 				arr[low++] = arr[high]
 			}
-			while(pivot >= arr[low] && low < high) {
-			// while(low < high && this.compare(pivot, arr[low])) {
+			while(low < high && this.compare(pivot, arr[low])) {
 				low++
 			}
 			if (low < high) {
@@ -33,8 +32,8 @@ class QuickSortInPlace {
 	sort(orgArr=[], low=0, high=orgArr.length - 1) {
 		if (low < high) {
 			let pivot = this.partition(orgArr, low, high)
-			this.partition(orgArr, low, pivot - 1)
-			this.partition(orgArr, pivot + 1, high)
+			this.sort(orgArr, low, pivot - 1)
+			this.sort(orgArr, pivot + 1, high)
 		}
 		return orgArr
 	}
