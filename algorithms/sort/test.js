@@ -1,6 +1,7 @@
 const { BubbleSort }  = require('./bubble_sort.js')
 const { QuickSort }  = require('./quick_sort.js')
 const { QuickSortInPlace }  = require('./quick_sort_in_place.js')
+const { SelectSort }  = require('./select_sort.js')
 
 function generateArr (size=10, start=0, end=100) {
 	const arr = []
@@ -12,7 +13,7 @@ function generateArr (size=10, start=0, end=100) {
 }
 
 function compareFn (a, b) {
-	return a >= b ? true : false
+	return a <= b ? true : false
 }
 
 let arr = generateArr(10)
@@ -22,7 +23,9 @@ let arr = generateArr(10)
 
 // const sort_method = new QuickSort(compareFn)
 
-const sort_method = new QuickSortInPlace(compareFn)
+// const sort_method = new QuickSortInPlace(compareFn)
+
+const sort_method = new SelectSort(compareFn)
 
 console.log(arr)
 
