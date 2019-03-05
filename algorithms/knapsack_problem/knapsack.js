@@ -26,7 +26,7 @@ class Knapsack {
 	}
 
 	solveZeroOneKnapsackProblem() {
-		// this.sortPossibleItemByValue()
+		this.sortPossibleItemByValue()
 		this.selectedItems = []
 		let row = this.possibleItems.length
 		let col = this.weightLimit + 1
@@ -62,9 +62,32 @@ class Knapsack {
 				}
 			}
 		}
-
-		// console.log(matrix, 'matrix')
 		// 从矩阵中找出
+		let itemIndex = row - 1
+		let weightIndex = col - 1
+		let total_value = 0
+		let total_weight = 0
+		while(itemIndex > 0) {
+			if (matrix[itemIndex][weightIndex] !== matrix[itemIndex - 1][weightIndex]) {
+				let select = this.possibleItems[itemIndex]
+				total_weight += select.weight
+				total_value += select.value
+				this.selectedItems.push(select)
+				weightIndex -= select.weight
+			}
+
+			itemIndex -= 1
+		}
+
+		if (total_value !== matrix[row - 1][col - 1]) {
+			this.selectedItems.push(this.possibleItems[0])
+			total_weight += this.possibleItems[0].weight
+		}
+
+		return {
+			totalWeight: total_weight,
+			totalVlaue: matrix[row - 1][col - 1]
+		}
 	}
 
 }

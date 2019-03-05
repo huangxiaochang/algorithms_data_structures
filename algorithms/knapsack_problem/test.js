@@ -9,4 +9,6 @@ let possibleItems = [
 ]
 
 let ks = new Knapsack(possibleItems, 10)
-ks.solveZeroOneKnapsackProblem()
+let res = ks.solveZeroOneKnapsackProblem()
+console.log(ks.selectedItems)
+console.log(res)
