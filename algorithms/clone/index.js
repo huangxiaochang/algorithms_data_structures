@@ -10,15 +10,17 @@ Object.assign(obj)
 function shallowClone(target) {
 	let res = {}
 	for(let k in target) {
-		target.hasOwnProperty(K) && res[k] = target[k]
+		if (target.hasOwnProperty(K)){
+			res[k] = target[k]
+		}
 	}
 	return res
 }
 
 // 2.浅拷贝数组
 let arr = [1, {a: 1}]
-Array.slice(arr, 0)
-Array.concat(arr, [])
+Array.prototype.slice.call(arr, 0)
+Array.prototype.concat.call(arr, [])
 
 // 等等，还有很多的方式可以实现浅拷贝
 
@@ -79,15 +81,15 @@ function cloneLoop(target) {
 			res = parent[key] = {}
 		}
 		for(let k in data) {
-			if(target.hasOwnProperty(k)) {
-				if (typeof target[k] === 'object') {
+			if(data.hasOwnProperty(k)) {
+				if (typeof data[k] === 'object') {
 					stack.push({
 						parent: res,
-						key: key,
+						key: k,
 						data: data[k]
 					})
 				} else {
-					res[k] = target[k]
+					res[k] = data[k]
 				}
 			}
 		}
@@ -124,21 +126,21 @@ function cloneForce(target) {
 			break
 		}
 
-		cacheData.push({
+		cache.push({
 			target: res,
 			source: data
 		})
 
 		for(let k in data) {
-			if(target.hasOwnProperty(k)) {
-				if (typeof target[k] === 'object') {
+			if(data.hasOwnProperty(k)) {
+				if (typeof data[k] === 'object') {
 					stack.push({
 						parent: res,
-						key: key,
+						key: k,
 						data: data[k]
 					})
 				} else {
-					res[k] = target[k]
+					res[k] = data[k]
 				}
 			}
 		}
@@ -148,7 +150,7 @@ function cloneForce(target) {
 
 
 function find(arr, data) {
-	for(let item in arr) {
+	for(let item of arr) {
 		if (item.source === data) {
 			return item
 		}
@@ -158,7 +160,7 @@ function find(arr, data) {
 
 
 // 创建测试的数据
-function createData (deep, breadth) {
+function createData (deep, breadth=0) {
 	let data = {}
 	let temp = data
 	for(let i = 0 ; i < deep; i++) {
@@ -172,19 +174,50 @@ function createData (deep, breadth) {
 
 /*
   对比
-              clone         cloneJSON      cloneLoop      cloneForce
-		循环引用  一层           不支持						一层					支持
-		栈溢出    会 					   会   						不会          不会
-		保持引用  否  				   否 							否             是
-		适合场景  一般数据拷贝   一般数据拷贝     层级很多       保持引用关系
+                  clone         cloneJSON      cloneLoop      cloneForce
+		循环引用      一层           不支持						一层					支持
+		栈溢出    		会 					   会   						不会          不会
+		保持引用  		否  				   否 							否             是
+		适合场景  		一般数据拷贝   一般数据拷贝     层级很多       保持引用关系
+		是否拷贝函数	是 							否 							是 							是
 
 
 		性能：clone > cloneLoop > cloneForce > cloneJSON
  */
 
-module.exports = {
-	cloneForce,
-	cloneLoop,
-	cloneJSON,
-	clone
+// 测试性能
+let a = createData(100000, 1)
+
+// 循环引用
+// let a = {}
+// a.a = a
+
+// 保持相同的引用
+// let b = {d: 1}
+// let a = {a1: b, a2: b}
+// let c = cloneForce(a)
+// console.log(c.a1 === c.a2)
+
+// 测试能够copy函数
+// let fn = function() {
+// 	console.log('测试拷贝函数')
+// }
+
+// let a = {
+// 	f1: fn,
+// 	f2: fn
+// }
+// let c = cloneLoop(a)
+// console.log(c.f1 === c.f2)
+
+console.log(clone(a))
+
+
+if (typeof module !== 'undefined') {
+	module.exports = {
+		cloneForce,
+		cloneLoop,
+		cloneJSON,
+		clone
+	}
 }
