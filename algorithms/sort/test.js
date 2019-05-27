@@ -2,11 +2,12 @@ const { BubbleSort }  = require('./bubble_sort.js')
 const { QuickSort }  = require('./quick_sort.js')
 const { QuickSortInPlace }  = require('./quick_sort_in_place.js')
 const { SelectSort }  = require('./select_sort.js')
+const { quickSortWithNonRecurive } = require('./quick_sort_without_recursive.js')
 
 function generateArr (size=10, start=0, end=100) {
 	const arr = []
 	while(size > 0) {
-		arr.push(Math.floor(Math.random() * (start + (end - start))))
+		arr.push(Math.floor(Math.random() * end + start))
 		size--
 	}
 	return arr
@@ -25,10 +26,13 @@ let arr = generateArr(10)
 
 // const sort_method = new QuickSortInPlace(compareFn)
 
-const sort_method = new SelectSort(compareFn)
+// const sort_method = new SelectSort(compareFn)
 
-console.log(arr)
+// console.log(arr)
 
-const sort_arr = sort_method.sort(arr)
+// const sort_arr = sort_method.sort(arr)
 
-console.log(sort_arr, 'after_sort')
+const sort_arr = quickSortWithNonRecurive(arr)
+
+console.log(arr, 'before_sort', arr.length)
+console.log(sort_arr, 'after_sort', sort_arr.length)
