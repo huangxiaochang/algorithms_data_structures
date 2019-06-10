@@ -23,7 +23,7 @@ Array.prototype.slice.call(arr, 0)
 Array.prototype.concat.call(arr, [])
 
 // 等等，还有很多的方式可以实现浅拷贝
-
+// 如es6的展开运算符
 
 // 实现深拷贝的方式
 // 1.先拷贝加递归
@@ -73,6 +73,7 @@ function cloneLoop(target) {
 		}
 	]
 
+	// 广度优先遍历
 	while(stack.length) {
 		const node = stack.pop()
 		const { parent, key, data } = node
