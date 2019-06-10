@@ -32,6 +32,7 @@ function getType(val) {
 	return Object.prototype.toString.call(val) === '[Object object]'
 }
 
+// 时间复杂度：创建递归的时间+处理每个对象的时间
 function clone (target) {
 	let res = {}
 	for(let k in target) {
@@ -53,6 +54,7 @@ function clone (target) {
 // 没有对参数进行检验
 
 // 2.使用JSON.stringify/parse的方法
+// 时间复杂度：循环检测的时间+处理每个对象的时间*2(递归转字符串+递归解析成对象)
 function cloneJSON(target) {
 	return JSON.parse(JSON.stringify(target))
 }
@@ -63,6 +65,7 @@ function cloneJSON(target) {
 // 可见JSON.stringify/parse的方式也是通过递归的方式来实现的
 
 // 3.使用循环+栈来实现
+// 时间复杂度：处理每个对象的时间
 function cloneLoop(target) {
 	const root = {}
 	const stack = [
@@ -102,6 +105,7 @@ function cloneLoop(target) {
 // 没有解决
 
 // 4. 使用循环+栈+缓存已拷贝过的值
+// 时间复杂度：判断对象时候在缓存中+处理每个对象的时间
 function cloneForce(target) {
 	const root = {}
 	const cache = []
