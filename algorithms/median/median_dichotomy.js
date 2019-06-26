@@ -6,7 +6,7 @@ var a = [1,4,7,9]
 var b = [2,3,5]
 
 // 中位数和top k 的问题
-function findMedian(a, b) {
+function findMedian(a, b, k) {
 	var m = a.length, n = b.length;
 	// 二分分治求值时，以长度比较短的数组作为基准分支，效率高一些
 	if (n < m) {
@@ -23,7 +23,7 @@ function findMedian(a, b) {
 	while(i <= j) {
 		c1 = (i + j) / 2 >> 0 // 对a数组进行二分
 		// m + n + 1 - 1为合并后的数组的中位数
-		c2 =((m + n) - c1) >> 0
+		c2 = k ? 2 * k - c1 : ((m + n) - c1) >> 0
 
 		l1 = c1 === 0 ? Number.MIN_VALUE : a[(c1 - 1) / 2 >> 0]
 		r1 = c1 === 2 * m ? Number.MAX_VALUE : a[c1 / 2 >> 0] 
@@ -42,7 +42,7 @@ function findMedian(a, b) {
 			break
 		}
 	}
-	return (Math.max(l1, l2) + Math.min(r1, r2)) / 2
+	return k ? Math.max(l1, l2) : (Math.max(l1, l2) + Math.min(r1, r2)) / 2
 }
 
-console.log(findMedian(b, a))
+console.log(findMedian(b, a, 4))
