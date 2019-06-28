@@ -104,3 +104,31 @@ console.log(BFSGetChild(arr, 66))
 
 DFSGetChild(arr, 66, res)
 console.log(res)
+
+function fn(value) {
+    // 回溯的标记
+    let _p = Symbol('parent');
+    // 找到子节点
+    let result;
+    function _fn(ar, p) {
+        for (let i = 0; i < ar.length; i++) {
+            ar[i][_p] = p;
+            if (ar[i].id === value) {
+                result = ar[i];
+                return;
+            }
+            !result && ar[i].children && _fn(ar[i].children, ar[i])
+        }
+        if (result) return;
+    }
+    _fn(arr, null);
+    let tmp = [];
+    if (!result) return null;
+    while (result) {
+        tmp.unshift(result.id);
+        result = result[_p];
+    }
+    return tmp;
+}
+
+console.log(fn(113))
