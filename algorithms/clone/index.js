@@ -149,6 +149,22 @@ function cloneForce(target) {
 				}
 			}
 		}
+
+		// 兼容es6的Symbol作为对象的键
+		// symbol键不会被for/in、for/of, Object.heys, Object.getOwnPropertyNames()、JSON.stringify()遍历和返回。
+		// 所以只能用Object.getOwnPropertySymbols来返回该对象所有的Symbol名。
+		let sbs = Object.hasOwnPropertySymbols(data)
+		for(let sb of sbs) {
+			if (typeof data[sb] === 'object') {
+				stack.push({
+					parent: res,
+					key: sb,
+					data: data[sb]
+				})
+			} else {
+				res[sb] = data[sb]
+			}
+		}
 	}
 	return root
 }
