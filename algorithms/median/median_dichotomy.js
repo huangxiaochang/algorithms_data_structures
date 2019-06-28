@@ -48,7 +48,7 @@
 // 分治法
 
 var a = [1,4,7,9]
-var b = [2,3,5]
+var b = [2]
 
 // 中位数和top k 的问题
 function findMedian(a, b, k) {
@@ -70,6 +70,7 @@ function findMedian(a, b, k) {
 		// m + n + 1 - 1为合并后的数组的中位数
 		c2 = k ? 2 * k - c1 : ((m + n) - c1) >> 0
 
+		// 如果c1 === 0 那么l1赋值极小值，这样左边的最大值便是l2
 		l1 = c1 === 0 ? Number.MIN_VALUE : a[(c1 - 1) / 2 >> 0]
 		r1 = c1 === 2 * m ? Number.MAX_VALUE : a[c1 / 2 >> 0] 
 
@@ -93,3 +94,73 @@ function findMedian(a, b, k) {
 }
 
 // console.log(findMedian(b, a, 4))
+
+// 根据第三点的算法,该算法不用统一处理合并后的数组的奇偶性，而是对于奇偶性进行不同的处理.
+// 如果传进k, 则求top k ,否者求中位数
+function findMedian2(A, B) {
+	
+	let m = A.length,
+      n = B.length;
+
+  if (m > n) {
+    [A, B] = [B, A]
+    let temp = m;
+    m = n;
+    n = temp;
+  }
+
+  let iMin = 0, iMax = m, half = (m + n + 1) >> 1, c1, c2;
+
+  while (iMin <= iMax) {
+    c1 = (iMin + iMax) >> 1;
+    c2 = half - c1;
+
+    if (c1 < iMax && B[c2 - 1] > A[c1]) {
+    	// l2 > r1
+    	// 数组1要增大
+      iMin = c1 + 1
+    } else if (c1 > iMin && B[c2] < A[c1 - 1]) {
+    	// l1 > r2
+    	// 数组1要减小
+      iMax = c2 - 1
+    } else {
+    	// c1 > imax || c1 < imin 越界
+    	
+      let maxLeft = 0;
+      if (c1 === 0) {
+      	// c1 < imin 越界,说明数组1，都比中位数大，则中位数在数组2中
+        maxLeft = B[c2 - 1]
+      } else if (c2 === 0) {
+      	// c2 < imin 越界,说明数组2，都比中位数大，则中位数在数组1中
+        maxLeft = A[c1 - 1]
+      } else {
+      	// 否者取两个数组左半边中最大的值作为top k
+        maxLeft = Math.max(A[c1 - 1], B[c2 - 1])
+      }
+
+      // 中位值分割处在数字上，则直接返回maxLeft
+      if ((m + n) % 2 === 1) return maxLeft;
+
+      // 否者中位数在两数之间，求top k + 1,
+      let minRight = 0;
+      if (c1 === m) {
+      	// c1 > imax 越界。说明数组1都比中位数小，则中位数在数组2中
+        minRight = B[c2]
+      } else if (c2 === n) {
+      	// c2 > imax 越界。说明数组2都比中位数小，则中位数在数组1中
+        minRight = A[c1]
+      } else {
+      	// 取两者最小值作为 top k + 1
+        minRight = Math.min(A[c1], B[c2])
+      }
+
+      // 中位数为 (top k + top (k + 1)) / 2
+      return (maxLeft + minRight) / 2
+    }
+  }
+}
+
+
+
+
+
