@@ -16,7 +16,9 @@
 	@params {fn} 节流的函数
 	@params {delay} 节流的时间
 	@params {options} 是否响应最后一次事件
-	不能同时设置options.leading, options.tailing为false
+	不能同时设置options.leading, options.trailing为false，否则如果没有在wait
+	时间后触发事件的话，事件回调函数都不会得到处理
+
 */
 
 function throttle (func, wait, options) {
@@ -55,9 +57,9 @@ function throttle (func, wait, options) {
 			res = func.apply(context, args)
 			// 防止内存泄漏
 			context = args = null
-		} else if (!timer && options.tailing !== false) {
+		} else if (!timer && options.trailing !== false) {
 			// 处理是否响应最后一次事件
-			// 只有当设置了options.tailing = true 响应最后一次事件时，
+			// 只有当设置了options.trailing = true 响应最后一次事件时，
 			// 并且还没有设置定时器的时候，才进行设置一个定时器来响应最后一次事件.
 			// 定时的时间为执行过一次回调函数后，在等待时间内再次发生的事件的时间
 			// 到需要等待的时间之间的时间端，这样才能保证每隔等待时间执行一次回调
