@@ -3,29 +3,45 @@
 /*
 	@params {fn} 需要防抖的函数
 	@params {delay} 防抖的时间间隔
-	@params {startEvent} 是否响应第一次事件,第一次事件： 超出防抖间隔事件后到达的第一次事件
+	@params {immediate} 是否响应第一次事件,第一次事件： 超出防抖间隔事件后到达的第一次事件
 */
-function debounce(fn, delay, startEvent) {
-	var timer = null
-	startEvent = startEvent || false
-	var isFirst = true
-	return function db () {
+function debounce(fn, delay, immediate) {
+	var timer = null, res = undefined, isFirst = true;
+	immediate = immediate || false
+	var debounced = function db () {
 		var args = [].slice.call(arguments)
 		var self = this
-		if (startEvent) {
-			fn.apply(self, args)
-			startEvent = false
-		}
-		if (timer) {
+		if (timer) { 
 			clearTimeout(timer)
-			timer = null
 			isFirst = false
 		}
-		timer = setTimeout(function () {
-			if (!isFirst) {
-				fn.apply(self, args)
+		if (immediate) {
+			if (!timer) {
+				res = fn.apply(self, args)
 			}
-			startEvent = true
-		}, delay)
+			timer = setTimeout(function() {
+				if (!isFirst) {
+					res = fn.apply(self, args)
+				}
+				clearTimeout(timer)
+				timer = null
+				isFirst = true
+			}, delay)
+		} else {
+			timer = setTimeout(function () {
+				res = fn.apply(self, args)
+				clearTimeout(timer)
+				timer = null
+			}, delay)
+		}
+		return res
 	}
+
+	debounced.cancel = function () {
+		clearTimeout(timer)
+		timer = null
+		isFirst = true
+	}
+
+	return debounced
 }
