@@ -17,7 +17,7 @@ function isObject (value) {
 function debounce(func, wait, options) {
   let lastArgs,
     lastThis,
-    maxWait,
+    maxWait, // 用于节流函数
     result,
     timerId,
     lastCallTime // 上一次触发防抖函数debounced的时间
@@ -57,7 +57,7 @@ function debounce(func, wait, options) {
     return result
   }
 
-  // 开始计时
+  // 开启定时器
   function startTimer(pendingFunc, wait) {
     if (useRAF) {
       root.cancelAnimationFrame(timerId);
@@ -74,7 +74,7 @@ function debounce(func, wait, options) {
     clearTimeout(id)
   }
 
-  // 设置一个定时器，设置lastInvokeTime，并根据leading决定执行func
+  // 执行连续事件刚开始的那次回调
   function leadingEdge(time) {
     // Reset any `maxWait` timer.
     lastInvokeTime = time
@@ -84,7 +84,7 @@ function debounce(func, wait, options) {
     return leading ? invokeFunc(time) : result
   }
 
-  // 剩余的等待时间
+  // 计算剩余的等待时间
   function remainingWait(time) {
     const timeSinceLastCall = time - lastCallTime
     const timeSinceLastInvoke = time - lastInvokeTime
@@ -98,7 +98,7 @@ function debounce(func, wait, options) {
       : timeWaiting
   }
 
-  // 是否应该调用用户函数
+  // 是否应该执行func函数
   function shouldInvoke(time) {
     const timeSinceLastCall = time - lastCallTime
     const timeSinceLastInvoke = time - lastInvokeTime
@@ -114,7 +114,7 @@ function debounce(func, wait, options) {
       (timeSinceLastCall < 0) || (maxing && timeSinceLastInvoke >= maxWait))
   }
 
-  // 计时器到期
+  // 定时器回调函数，表示定时结束后的操作: 一是执行传入的func,另一种是不执行.
   function timerExpired() {
     const time = Date.now()
     if (shouldInvoke(time)) {
@@ -125,11 +125,14 @@ function debounce(func, wait, options) {
     timerId = startTimer(timerExpired, remainingWait(time))
   }
 
+  // 执行连续事件结束后的那次回调函数
   function trailingEdge(time) {
     timerId = undefined
 
     // Only invoke if we have `lastArgs` which means `func` has been
     // debounced at least once.
+    // 如果在wait期间只调用一次debounced,并且leading设置为true,则不会调用func,因为此时
+    // lastArgs为undefined，因为每次执行完func的时候，都会设置lastArgs为undefined。
     if (trailing && lastArgs) {
       return invokeFunc(time)
     }
@@ -137,6 +140,7 @@ function debounce(func, wait, options) {
     return result
   }
 
+  // 取消函数延迟执行
   function cancel() {
     if (timerId !== undefined) {
       cancelTimer(timerId)
@@ -145,14 +149,17 @@ function debounce(func, wait, options) {
     lastArgs = lastCallTime = lastThis = timerId = undefined
   }
 
+  // 立即执行func函数
   function flush() {
     return timerId === undefined ? result : trailingEdge(Date.now())
   }
 
+  // 检查当前是否正在计时中
   function pending() {
     return timerId !== undefined
   }
 
+  // 入口函数，每次事件触发都会执行该函数
   function debounced(...args) {
     const time = Date.now()
     const isInvoking = shouldInvoke(time)
@@ -191,5 +198,26 @@ function debounce(func, wait, options) {
   debounced.flush = flush
   debounced.pending = pending
   return debounced
+}
+
+function throttle(func, wait, options) {
+  // 首尾调用默认为 true
+  let leading = true
+  let trailing = true
+
+  if (typeof func !== 'function') {
+    throw new TypeError('Expected a function')
+  }
+  
+  if (isObject(options)) {
+    leading = 'leading' in options ? !!options.leading : leading
+    trailing = 'trailing' in options ? !!options.trailing : trailing
+  }
+  // maxWait 为 wait 的防抖函数
+  return debounce(func, wait, {
+    leading,
+    trailing,
+    'maxWait': wait,
+  })
 }
 
