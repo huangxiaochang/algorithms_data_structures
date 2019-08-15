@@ -41,14 +41,14 @@ function f3(a, ...args) {} // f3.length == 1
 function curring (fn, args) {
 	var length = fn.length
 	args = args || []
-	return function () {
+	return function cur () {
 		var _args = [].slice.call(arguments)
 		args = args.concat(_args)
 		// 实参个数大于形参，则执行函数
 		if (args.length >= length) {
 			return fn.apply(this, args)
 		} else {
-			// 否者返回函数，继续接收参数
+			// 否者返回函数，继续接收参数, 此处返回的是cur
 			return curring.call(this, fn, args)
 		}
 	}
