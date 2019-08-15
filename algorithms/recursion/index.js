@@ -6,7 +6,7 @@ function reverseNumber (num) {
   }
   return ('' + num % 10 + reverseNumber(num / 10 >> 0) )
 }
-console.log(reverseNumber(1))
+console.log(reverseNumber(1328))
 
 function printNumber (n, i) {
   var i = i || 1

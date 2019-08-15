@@ -26,7 +26,7 @@ Array.prototype.concat.call(arr, [])
 // 如es6的展开运算符
 
 // 实现深拷贝的方式
-// 1.先拷贝加递归
+// 1.浅拷贝加递归
 
 function getType(val) {
 	return Object.prototype.toString.call(val) === '[Object object]'

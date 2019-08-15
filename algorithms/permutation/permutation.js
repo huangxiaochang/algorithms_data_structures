@@ -89,14 +89,6 @@ function quitSort(orgArr=[]) {
 	return quitSort(left).concat([pos], quitSort(right))
 }
 
-// 全排序非递归算法，按字典序排列算法
-// 算法思路：
-//  1。把所有数排成一个最小数
-// 	2.从后向前找到第一双相邻的递增数字。
-// 	3。把前一个数作为替换数a，找从后找到比替换数大的最小数b
-// 	4. 交换a,b。然后将替换点之后的数进行反转。
-// 	5.打印输出一种排序
-//  6.如果这个数达到最大，则结束循环
 function getMin(arr, pos) {
 	let len = arr.length - 1
 	let minPos
@@ -111,23 +103,37 @@ function getMin(arr, pos) {
 			}
 		}
 	}
-	console.log(minPos, 'minPos')
 	return minPos
 }
 
+// 全排序非递归算法，按字典序排列算法
+// 算法思路：
+//  1。把所有数排成一个最小数（即数组项是从小到大的）
+// 	2。从后向前找到第一双相邻的递增数字。
+// 	3。把前一个数作为替换数a，从后找到比替换数大的最小数b
+// 	4。交换a,b。然后将替换点之后的数进行反转。
+// 	5。打印输出一种排序
+//  6。如果这个数达到最大，则结束循环
 function permutateWithStack (arr) {
 	let permutations = []
-	// 进行排序
+	// 进行排序，即把所有的数排成一个最小数
 	arr = quitSort(arr)
+	// 得到最大数
 	let max = arr.slice(0).reverse()
 	max = 1 * max.join('')
+
+	// 最小数也是一种全排序， 加入结果中
 	permutations.push([...arr])
+
 	while (true) {
 		// 找到替换的两个数
 		let a = 0
 		let b = 0
+
+		// 从后面开始查找第一双相邻的递增数字
 		for(let i = arr.length - 1; i > 0; i--) {
 			if (arr[i -1] < arr[i]) {
+				// 前一个数作为替换数a
 				a = i-1
 				// 找到比替换数大的最小数
 				b = getMin(arr,a)
