@@ -1,101 +1,79 @@
-const { Comparator } = require('../../util.js')
-const { HashTable } =require('../hashTable/hash_table.js')
+// 二叉树的节点
+
+const { defaultCompareFn } = require('../../util.js')
 
 class BinaryTreeNode {
-	constructor(value=null, compareFn) {
+	constructor(value=null) {
 		this.value = value
 		this.parent = null
 		this.left = null
 		this.right = null
-		this.meta = new HashTable()
-		this.nodeCompareFn = (new Comparator(compareFn)).compareFn
 	}
-	
+
 	setValue(value) {
 		this.value = value
 		return this
 	}
 
 	setLeftChild(node) {
-		if (this.left) {
-			this.left.parent = null
-		}
+		if (!node instanceof BinaryTreeNode) { throw new TypeError("param must be a binaryTreeNode") }
+		if (this.left) { this.left.parent = null }
+
 		this.left = node
-		if (this.left) {
-			this.left.parent = this
-		}
+		this.left.parent = this
 		return this
 	}
 
 	setRightChild(node) {
-		if (this.right) {
-			this.right.parent = null
-		}
+		if (!node instanceof BinaryTreeNode) { throw new TypeError("param must be a binaryTreeNode") }
+		if (this.right) { this.right.parent = null }
+
 		this.right = node
-		if (this.right) {
-			this.right.parent = this
-		}
+		this.right.parent = this
 		return this
 	}
 
-	removeChild(node) {
-		if (this.left && this.nodeCompareFn(node, this.left) === 0) {
-			this.left = null
-			return true
-		}
-
-		if (this.right && this.nodeCompareFn(node, this.right) === 0) {
-			return true
-		}
-
-		return false
+	setChildren (leftNode, rightNode) {
+		this.setLeftChild(leftNode)
+		this.setRightChild(right)
+		return this
 	}
 
-	replaceChild(oldNode, newNode) {
-		if (!oldNode || !newNode) {
-			return false
-		}
-
-		if (this.left && this.nodeCompareFn(oldNode, this.left) === 0) {
-			this.left = newNode
-			return true
-		}
-
-		if (this.right && this.nodeCompareFn(oldNode, this.right) === 0) {
-			this.right = newNode
-			return true
-		}
-
-		return false
+	removeLeftChild() {
+		if (this.left) { this.left.parent = null }
+		this.left = null
 	}
 
-	static copyNode(sourceNode, targetNode) {
-		targetNode.setValue(sourceNode.value)
-		targetNode.setLeftChild(sourceNode.left)
-		targetNode.setRightChild(sourceNode.right)
-		targetNode.meta = sourceNode.meta
+	removeRightChild() {
+		if (this.right) { this.right.parent = null }
+		this.right = null
 	}
 
-	traverseInOrder () {
-		let traverse = []
-
-		if (this.left) {
-			traverse = traverse.concat(this.left.traverseInOrder())
-		}
-
-		traverse.push(this.value)
-
-		if (this.right) {
-			traverse = traverse.concat(this.right.traverseInOrder())
-		}
-
-		return traverse
+	removeChildren () {
+		if (this.left) { this.left.parent = null }
+		if (this.right) { this.right.parent = null }
+		this.left = null
+		this.right = null
 	}
 
-	toString () {
-		return this.traverseInOrder().toString()
+	getLeftChild () {
+		return this.left
+	}
+
+	getRightChild () {
+		return this.right
+	}
+
+	static copyNode(node) {
+		if (!node instanceof BinaryTreeNode) { throw new TypeError("param must be a binaryTreeNode") }
+		const newNode = new BinaryTreeNode(node.value)
+		newNode.parent = node.parent
+		newNode.left = node.left
+		newNode.right = node.right
+		return newNode
 	}
 }
+
 
 module.exports = {
 	BinaryTreeNode
