@@ -96,12 +96,13 @@ function findMedian(a, b, k) {
 // console.log(findMedian(b, a, 4))
 
 // 根据第三点的算法,该算法不用统一处理合并后的数组的奇偶性，而是对于奇偶性进行不同的处理.
-// 如果传进k, 则求top k ,否者求中位数
+// 即如果合并后的数组为即数组，那么中位数即为top k, 否者为(top k + top (k +1)) / 2
 function findMedian2(A, B) {
 	
 	let m = A.length,
       n = B.length;
-
+      
+  // 以长度较小的数组作为基数组
   if (m > n) {
     [A, B] = [B, A]
     let temp = m;
@@ -109,20 +110,22 @@ function findMedian2(A, B) {
     n = temp;
   }
 
+  // 为运算 >> 1  -> 除以2取整
   let iMin = 0, iMax = m, half = (m + n + 1) >> 1, c1, c2;
 
   while (iMin <= iMax) {
     c1 = (iMin + iMax) >> 1;
     c2 = half - c1;
 
+    // r1 = A[c1] = A[c1 + 1 - 1], 数组的下标要减1
     if (c1 < iMax && B[c2 - 1] > A[c1]) {
     	// l2 > r1
     	// 数组1要增大
-      iMin = c1 + 1
+      iMin = iMin + 1
     } else if (c1 > iMin && B[c2] < A[c1 - 1]) {
     	// l1 > r2
     	// 数组1要减小
-      iMax = c2 - 1
+      iMax = iMax - 1
     } else {
     	// c1 > imax || c1 < imin 越界
     	
@@ -139,7 +142,7 @@ function findMedian2(A, B) {
       }
 
       // 中位值分割处在数字上，则直接返回maxLeft
-      if ((m + n) % 2 === 1) return maxLeft;
+      if ((m + n) & 1 !== 0) return maxLeft;
 
       // 否者中位数在两数之间，求top k + 1,
       let minRight = 0;
@@ -159,6 +162,12 @@ function findMedian2(A, B) {
     }
   }
 }
+
+console.log(findMedian2([1,3,5,7,8,9,10], [2,4,6,11,12]))
+console.log(findMedian2(a, b))
+
+console.log(findMedian(a, b))
+console.log(findMedian([1,3,5,7,8,9,10], [2,4,6,11,12]))
 
 
 
