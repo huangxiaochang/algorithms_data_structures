@@ -1,6 +1,8 @@
 // 二叉树
 const { BinaryTreeNode } = require('./binaryTreeNode.js')
 const { defaultCompareFn, getValueType } = require('../../util.js')
+const cache = {}
+let id = 0
 
 class BinaryTree {
 	constructor (target, type, compareFn) {
@@ -368,6 +370,66 @@ class BinaryTree {
 		// 超过的层级，返回空数组
 		return level > dep ? [] : ret
 	}
+
+	// 计算二叉树中不相邻节点和最大值：
+	// 使用递归和动态规划的方法来进行求值
+	calcMaxValue (node=this.root, nodeList=[]) {
+		if (!node) {
+			return {
+				value: 0,
+				nodeList: nodeList
+			}
+		}
+
+		// 如果使用缓存，则从缓存中或者结果，这样会极大地提高算法的效率
+		// if (cache[`node_${id}`]) {
+		// 	return cache[`node_${id}`]
+		// }
+
+		// 分别计算当前节点的左右树的不相邻节点和最大值
+		let maxLeft = this.calcMaxValue(node.left).value
+		let maxRight = this.calcMaxValue(node.right).value
+
+		// 分别计算当前节点的左孩子节点的左右孩子树的不相邻节点和最大值
+		let maxLeftLeft = 0
+		let maxLeftRight = 0
+		if (node.left) {
+			maxLeftLeft = this.calcMaxValue(node.left.left).value
+			maxLeftRight = this.calcMaxValue(node.left.right).value
+		}
+
+		// 分别计算当前节点的右孩子节点的左右孩子树的不相邻节点和最大值
+		let maxRightLeft = 0
+		let maxRightRight = 0
+		if (node.right) {
+			maxRightLeft = this.calcMaxValue(node.right.left).value
+			maxRightRight = this.calcMaxValue(node.right.right).value
+		}
+
+		// 动态规划，加入该节点和不加入该节点的最值
+		// 如果加入当前节点，那么最值就是当前节点和其孩子节点的孩子树的最值之和
+		let addCurrent = node.value + maxLeftLeft + maxLeftRight + maxRightLeft + maxRightRight
+		// 不包含当前节点，则最大值为左右孩子的最值之和
+		let removeCurrent = maxLeft + maxRight
+
+		// 然后比较这两种方式，返回他们的最大值，即为该节点的策略(加或者不加)
+		let max = 0
+		if (addCurrent > removeCurrent) {
+			nodeList.push(node)
+			max = addCurrent
+		} else {
+			max = removeCurrent
+		}
+
+		// 可以为每个节点的元信息标记一个唯一的标记，并缓存已经计算的最值，
+		// 这样会提高算法的效率
+		// cache[`node_${id}`] = max
+
+		return {
+			value: max,
+			nodeList: nodeList
+		}
+	}
 }
 
 // var arrTree = new BinaryTree([1,2,3,4,5,undefined,6,undefined,undefined,7,8])
@@ -394,7 +456,7 @@ var objTree = new BinaryTree({
 
 // console.log(objTree.root)
 
-console.log(objTree.getLevelNodes(5))
+console.log(objTree.calcMaxValue())
 
 
 module.exports = {
