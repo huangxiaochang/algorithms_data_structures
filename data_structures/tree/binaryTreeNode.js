@@ -8,6 +8,7 @@ class BinaryTreeNode {
 		this.parent = null
 		this.left = null
 		this.right = null
+		this.meta = {}
 	}
 
 	setValue(value) {
