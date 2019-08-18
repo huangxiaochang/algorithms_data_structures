@@ -9,6 +9,19 @@ class Comparator {
 	}
 }
 
+function defaultCompareFn (a, b) {
+	if (a === b) { return 0 }
+	return a < b ? -1 : 1
+}
+
+// 判断值的类型
+function getValueType (value) {
+	let type = Object.prototype.toString.call(value)
+	return type.substring(8, type.length - 1).toLowerCase()
+}
+
 module.exports = {
-	Comparator
+	Comparator,
+	defaultCompareFn,
+	getValueType
 }

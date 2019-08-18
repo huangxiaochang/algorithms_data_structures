@@ -1,12 +1,15 @@
 // 二叉树
 const { BinaryTreeNode } = require('./binaryTreeNode.js')
-const { defaultCompareFn } = require('../../util.js')
+const { defaultCompareFn, getValueType } = require('../../util.js')
 
 class BinaryTree {
-	constructor (arr, compareFn) {
-		if (!arr instanceof Array) { throw new TypeError("param must be an array") }
-		this.nodeCompareFn = typeof compareFn === 'function' ? compareFn : defaultCompareFn
-		this.root = this.createBinaryTreeByArray(arr)
+	constructor (target, type, compareFn) {
+		let targetType = getValueType(target)
+		if (targetType !== 'object' && targetType !== 'array') { throw new TypeError("param must be an array or object") }
+		this.nodeCompareFn = getValueType(compareFn) === 'function' ? compareFn : defaultCompareFn
+		this.root = targetType === 'object'
+								? this.createBinaryTreeByObject(target)
+								: this.createBinaryTreeByArray(target)
 	}
 
 	// 通过数组来创建二叉树：空节点时，数组项要为undefined。规则为数组项依次对应树节点：从上到下，
@@ -42,11 +45,61 @@ class BinaryTree {
 			nodeList.push(rightNode)
 			node.right = rightNode
 		}
-
 		node = leftNode = rightNode = null;
 		return tree
 	}
-	// 节点比较函数
+
+	// 通过对象的形式创建一个二叉树，规则：
+	// 节点的值使用value字段表示，left/right分布表示左右孩子
+	createBinaryTreeByObject (obj) {
+		if (obj !== null && getValueType(obj) !== 'object') {
+			throw new TypeError("param must be an object")
+		}
+		let tree = null
+		const queue = [{
+			parent: null,
+			child: '',
+			data: obj
+		}]
+
+		if (obj) {
+			while (queue.length) {
+				let { parent, child, data } = queue.shift()
+				let node = new BinaryTreeNode(data.value || data)
+				node.parent = parent
+				if (!parent) { 
+					tree = node 
+					parent = node
+				} else {
+					if (child === 'left') {
+						parent.left = node
+					} else {
+						parent.right = node
+					}
+				}
+
+				if (data.left) {
+					queue.push({
+						parent: node,
+						child: 'left',
+						data: data.left
+					})
+				}
+				if (data.right) {
+					queue.push({
+						parent: node,
+						child: 'right',
+						data: data.right
+					})
+				}
+			}
+		}
+		return tree
+	}
+
+
+	// 节点比较函数: 自定义的比较函数规则：
+	// 如果是相等，则返回0，如果是大于，则返回1，否者返回-1
 	setNodeCompareFn (fn) {
 		if (typeof fn === 'function') {
 			this.nodeCompareFn = fn
@@ -234,17 +287,114 @@ class BinaryTree {
 		return ret
 	}
 
-	getChild (value, start) {
+	// 查找某个孩子节点:
+	// 可以使用前面的遍历方法来查找，找到的时候，则提前结束。
+	// 此处用前序遍历的递归算法查找某个孩子节点
+	findChild (value, start) {
 		start = start instanceof BinaryTreeNode ? start : this.root
+		let node = start
+		const stack = []
+		const ret = []
+		while (node || stack.length) {
+			if (node) {
+				ret.push(node)
+				if (this.nodeCompareFn(node.value, value) === 0) {
+					break
+				}
+				stack.push(node)
+				node = node.left
+			} else {
+				node = stack.pop().right
+			}
+		}
+		return {
+			path: ret,
+			node: (ret.length === 0 ? null : ret[ret.length - 1])
+		}
 	}
 
+	// 获取某个节点的层级:
+	// 使用上面findChild的方法查找孩子节点，路径的长度即为它的层级
+	getChildLevel (value, start) {
+		const path = this.findChild(value, start)
+		// 找不到时，为-1
+		return (path.length === 0 ? -1 : path.length)
+	}
+
+	// 获取总层级: 分别求出左树和右树的层级，取两者的最大值加1
+	getTreeLevel (node) {
+		node = node || this.root
+		let leftLevel = 0
+		let rightLevel = 0
+		if (node) {
+			if (node.left) {
+				leftLevel = this.getTreeLevel(node.left)
+			}
+			if (node.right) {
+				rightLevel = this.getTreeLevel(node.right)
+			}
+			return Math.max(leftLevel, rightLevel) + 1
+		} else {
+			return 0
+		}
+	}
+
+	// 返回某层级的所有节点
+	getLevelNodes (level, start) {
+		if (level < 1) {
+			throw new Error("level must be a positive number")
+		}
+		start = start instanceof BinaryTreeNode ? start : this.root
+		if (!start) { return [] }
+
+		let stack = [start]
+		let ret = [start]
+		let dep = 1
+		while (dep < level) {
+			ret = []
+			for(let i = 0; i < stack.length; i++) {
+				let node = stack[i]
+				if (node.left) {
+					ret.push(node.left)
+				}
+				if (node.right) {
+					ret.push(node.right)
+				}
+			}
+			stack = ret
+			dep += 1
+		}
+
+		// 超过的层级，返回空数组
+		return level > dep ? [] : ret
+	}
 }
 
-var tree = new BinaryTree([1,2,3,4,5,undefined,6,undefined,undefined,7,8])
+// var arrTree = new BinaryTree([1,2,3,4,5,undefined,6,undefined,undefined,7,8])
 
-// console.log(tree.root)
+// console.log(arrTree)
+var objTree = new BinaryTree({
+	value: 1,
+	left: {
+		value: 2,
+		left: {
+			value: 4
+		},
+		right: {
+			value: 5,
+			left: 7,
+			right: 8
+		}
+	},
+	right: {
+		value: 3,
+		right: 6
+	}
+})
 
-console.log(tree.postNonRecursive2())
+// console.log(objTree.root)
+
+console.log(objTree.getLevelNodes(5))
 
 
 module.exports = {
