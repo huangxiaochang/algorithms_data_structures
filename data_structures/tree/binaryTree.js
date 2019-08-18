@@ -15,9 +15,12 @@ class BinaryTree {
 			throw new TypeError("param must be an array or object") 
 		}
 		this.nodeCompareFn = getValueType(compareFn) === 'function' ? compareFn : defaultCompareFn
-		this.root = targetType === 'object'
-								? this.createBinaryTreeByObject(target)
-								: this.createBinaryTreeByArray(target)
+		this.length = 0
+		this.root = targetType !== 'undefined'
+								? targetType === 'object'
+									? this.createBinaryTreeByObject(target)
+									: this.createBinaryTreeByArray(target)
+								: null
 	}
 
 	// 通过数组来创建二叉树：空节点时，数组项要为undefined。规则为数组项依次对应树节点：从上到下，
@@ -36,19 +39,30 @@ class BinaryTree {
 				if (i === 0) { 
 					if (arr[0] === undefined ) { throw new TypeError("root node must be exist") }
 					node = new BinaryTreeNode(arr[0])
+					this.length++
 					nodeList.push(node)
 					tree = node
 				} else {
 					node = nodeList[i]
 				}
 				let left = 2 * i + 1
-				leftNode = (left < len && arr[left] !== undefined) ? new BinaryTreeNode(arr[left]) : null
+				if (left < len && arr[left] !== undefined) {
+					leftNode = new BinaryTreeNode(arr[left])
+					this.length++
+				} else {
+					leftNode = null
+				}
 				if (leftNode) { leftNode.parent = node}
 				nodeList.push(leftNode)
 				node.left = leftNode
 
 				let right = 2 * i + 2
-				rightNode = (right < len && arr[right] !== undefined) ? new BinaryTreeNode(arr[right]) : null
+				if (right < len && arr[right] !== undefined) {
+					rightNode = new BinaryTreeNode(arr[right])
+					this.length++
+				} else {
+					rightNode = null
+				}
 				if (rightNode) { rightNode.parent = node}
 				nodeList.push(rightNode)
 				node.right = rightNode
@@ -75,6 +89,7 @@ class BinaryTree {
 			while (queue.length) {
 				let { parent, child, data } = queue.shift()
 				let node = new BinaryTreeNode(data.value || data)
+				this.length++
 				node.parent = parent
 				if (!parent) { 
 					tree = node 
@@ -477,9 +492,10 @@ class BinaryTree {
 	}
 }
 
-// var arrTree = new BinaryTree([1,2,3,4,5,undefined,6,undefined,undefined,7,8])
+var arrTree = new BinaryTree([1,2,3,4,5,undefined,6,undefined,undefined,7,8])
 
-// console.log(arrTree)
+console.log(arrTree)
+
 var objTree1 = new BinaryTree({
 	value: 1,
 	left: {
@@ -520,9 +536,12 @@ var objTree2 = new BinaryTree({
 var objTree3 = new BinaryTree()
 var objTree4 = new BinaryTree()
 
-console.log(BinaryTree.compare(objTree1,objTree2,undefined, true))
-console.log(BinaryTree.compare(objTree1,objTree3,undefined, true))
-console.log(BinaryTree.compare(objTree4,objTree3,undefined, true))
+// console.log(BinaryTree.compare(objTree1,objTree2,undefined, true))
+// console.log(BinaryTree.compare(objTree1,objTree3,undefined, true))
+// console.log(BinaryTree.compare(objTree4,objTree3,undefined, true))
+
+console.log(objTree1)
+console.log(objTree3)
 
 module.exports = {
 	BinaryTree
