@@ -7,7 +7,13 @@ let id = 0
 class BinaryTree {
 	constructor (target, type, compareFn) {
 		let targetType = getValueType(target)
-		if (targetType !== 'object' && targetType !== 'array') { throw new TypeError("param must be an array or object") }
+		if (
+			targetType !== 'object' && 
+			targetType !== 'array' && 
+			targetType !=='undefined'
+		) { 
+			throw new TypeError("param must be an array or object") 
+		}
 		this.nodeCompareFn = getValueType(compareFn) === 'function' ? compareFn : defaultCompareFn
 		this.root = targetType === 'object'
 								? this.createBinaryTreeByObject(target)
@@ -18,34 +24,35 @@ class BinaryTree {
 	// 从左到右
 	createBinaryTreeByArray (arr) {
 		let tree = null,
-				len = arr.length,
 				node = null,
 				leftNode = null,
 				rightNode = null;
 		const nodeList = [];
+		if (arr) {
+			let len = arr.length
+			for(let i = 0; i < len; i++) {
+				if (arr[i] === undefined) { continue }
+				node = null
+				if (i === 0) { 
+					if (arr[0] === undefined ) { throw new TypeError("root node must be exist") }
+					node = new BinaryTreeNode(arr[0])
+					nodeList.push(node)
+					tree = node
+				} else {
+					node = nodeList[i]
+				}
+				let left = 2 * i + 1
+				leftNode = (left < len && arr[left] !== undefined) ? new BinaryTreeNode(arr[left]) : null
+				if (leftNode) { leftNode.parent = node}
+				nodeList.push(leftNode)
+				node.left = leftNode
 
-		for(let i = 0; i < len; i++) {
-			if (arr[i] === undefined) { continue }
-			node = null
-			if (i === 0) { 
-				if (arr[0] === undefined ) { throw new TypeError("root node must be exist") }
-				node = new BinaryTreeNode(arr[0])
-				nodeList.push(node)
-				tree = node
-			} else {
-				node = nodeList[i]
+				let right = 2 * i + 2
+				rightNode = (right < len && arr[right] !== undefined) ? new BinaryTreeNode(arr[right]) : null
+				if (rightNode) { rightNode.parent = node}
+				nodeList.push(rightNode)
+				node.right = rightNode
 			}
-			let left = 2 * i + 1
-			leftNode = (left < len && arr[left] !== undefined) ? new BinaryTreeNode(arr[left]) : null
-			if (leftNode) { leftNode.parent = node}
-			nodeList.push(leftNode)
-			node.left = leftNode
-
-			let right = 2 * i + 2
-			rightNode = (right < len && arr[right] !== undefined) ? new BinaryTreeNode(arr[right]) : null
-			if (rightNode) { rightNode.parent = node}
-			nodeList.push(rightNode)
-			node.right = rightNode
 		}
 		node = leftNode = rightNode = null;
 		return tree
@@ -430,12 +437,50 @@ class BinaryTree {
 			nodeList: nodeList
 		}
 	}
+
+	// 比较两个二叉树是否相等：结构和节点的值是否相等
+	// 算法思路： 遍历两颗树，比较每一个节点
+	static compare (tree1, tree2, compareFn=defaultCompareFn, onlyStructure=false) {
+		if (!tree1 instanceof BinaryTree || !tree2 instanceof BinaryTree) {
+			throw new TypeError("target be compared must be a BinaryTree")
+		}
+		if (getValueType(compareFn) !== 'function') {
+			throw new TypeError("compare function must be a function")
+		}
+		if (tree1.root && tree2.root) {
+			// 采用先序广度优先遍历的方式来进行对比
+			const queue1 = [tree1.root]
+			const queue2 = [tree2.root]
+			while (queue1.length && queue2.length) {
+				let node1 = queue1.shift()
+				let node2 = queue2.shift()
+				if (node1 && node2) {
+					if (!onlyStructure && compareFn(node1.value, node2.value) !== 0) {
+						return false
+					}
+					queue1.push(node1.left)
+					queue1.push(node1.right)
+					queue2.push(node2.left)
+					queue2.push(node2.right)
+				} else if (node1 || node2) {
+					return false
+				}
+			}
+			if (queue1.length !== queue2.length) {
+				return false
+			}
+			return true
+		} else if (tree1.root || tree2.root) {
+			return false
+		}
+		return true
+	}
 }
 
 // var arrTree = new BinaryTree([1,2,3,4,5,undefined,6,undefined,undefined,7,8])
 
 // console.log(arrTree)
-var objTree = new BinaryTree({
+var objTree1 = new BinaryTree({
 	value: 1,
 	left: {
 		value: 2,
@@ -453,11 +498,31 @@ var objTree = new BinaryTree({
 		right: 6
 	}
 })
+var objTree2 = new BinaryTree({
+	value: 1,
+	left: {
+		value: 2,
+		left: {
+			value: 4
+		},
+		right: {
+			value: 5,
+			left: 8,
+			right: 7
+		}
+	},
+	right: {
+		value: 3,
+		left: 6
+	}
+})
 
-// console.log(objTree.root)
+var objTree3 = new BinaryTree()
+var objTree4 = new BinaryTree()
 
-console.log(objTree.calcMaxValue())
-
+console.log(BinaryTree.compare(objTree1,objTree2,undefined, true))
+console.log(BinaryTree.compare(objTree1,objTree3,undefined, true))
+console.log(BinaryTree.compare(objTree4,objTree3,undefined, true))
 
 module.exports = {
 	BinaryTree
