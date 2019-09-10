@@ -4,6 +4,7 @@ const { QuickSortInPlace }  = require('./quick_sort_in_place.js')
 const { SelectSort }  = require('./select_sort.js')
 const { quickSortWithNonRecurive } = require('./quick_sort_without_recursive.js')
 const { insertSort } = require('./insert_sort.js')
+const { mergeSort, mergeSortWithoutRecursive } = require('./merge_sort.js')
 
 function generateArr (size=10, start=0, end=100) {
 	const arr = []
@@ -34,7 +35,12 @@ let arr = generateArr(10)
 // const sort_arr = sort_method.sort(arr)
 
 // const sort_arr = quickSortWithNonRecurive(arr)
-const sort_arr = insertSort(arr)
+
+// const sort_arr = insertSort(arr)
+
+// const sort_arr = mergeSort(arr)
+
+const sort_arr = mergeSortWithoutRecursive(arr)
 
 console.log(arr, 'before_sort', arr.length)
 console.log(sort_arr, 'after_sort', sort_arr.length)
