@@ -13,5 +13,7 @@ list.insertNode(0, 4)
 list.delNodeByIndex(2)
 list.delNodeByValue(1)
 console.log(list.toArrary())
+list.reverse()
 console.log(list, 'list')
+console.log(list.toArrary(), 'listArray')
 

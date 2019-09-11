@@ -26,6 +26,22 @@ class linkList {
 	isEmpty () {
 		return !this.head
 	}
+	/*
+		reverse a linkList
+		反转链表合影使用递归来实现，因为它可以分成多个相似的子问题
+	 */
+	reverse () {
+		// pre用来保存已经反转的链表的head
+		let pre = null, last = null;
+
+		while (this.head) {
+			last = this.head.next
+			this.head.next = pre
+			pre = this.head
+			this.head = last
+		}
+		this.head = pre
+	}
 	// prepend a node to a linkList
 	/* @params value *
 		 @retrun linkList
