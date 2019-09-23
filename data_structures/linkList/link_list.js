@@ -11,11 +11,28 @@ class linkListNode {
 }
 
 class linkList {
-	constructor(compareFn) {
+	constructor(arr=[], compareFn) {
 		this.head = null
 		this.tail = null
 		this.length = 0
 		this.compare = (new Comparator(compareFn)).compare
+		if (arr instanceof Array && arr.length !== 0) {
+			this.init(arr)
+		}
+	}
+	/*
+		初始化一个链表
+		@params arr Array
+		@return linklist
+	 */
+	init (arr) {
+		this.tail = this.head = new linkListNode(arr[0])
+		for(let i = 1; i < arr.length; i++) {
+			const node = new linkListNode(arr[i])
+			this.tail.next = node
+			this.tail = node
+		}
+		this.length = arr.length
 	}
 	/*
 		return linkList length
@@ -25,6 +42,74 @@ class linkList {
 	}
 	isEmpty () {
 		return !this.head
+	}
+	/*
+		reverse a linkList
+		反转链表合影使用递归来实现，因为它可以分成多个相似的子问题
+	 */
+	reverse () {
+		// pre用来保存已经反转的链表的head
+		let pre = null, last = null;
+		this.tail = this.head
+		while (this.head) {
+			last = this.head.next
+			this.head.next = pre
+			pre = this.head
+			this.head = last
+		}
+		this.head = pre
+	}
+	/*
+		reverse a linkList with k number of node as a group
+	 */
+	reverseWithStep (k) {
+		if (k > this.length || k <= 1) { return }
+		let len = this.length
+		// 首先创建一个头节点指向链表的第一个节点
+		let header = new linkListNode(null, this.head)
+
+		let pre = header
+		// 每k个节点为一组进行反转
+		while (len >= k) {
+			// 如果剩余的节点还可以组成一组，则反转这一组
+			if (len >= k) {
+				// 使用lat指向一组的下一个节点
+				let lat = pre, i = 0;
+				while (i <= k) {
+					lat = lat.next
+					i++
+				}
+				pre = this.reverseGroup(pre, lat)
+			}
+			len -= k
+		}
+		
+		this.head = header.next
+	}
+	/*
+		反转一组节点(k)个
+		pre: 组的前一个节点
+		lat：组的后一个节点
+		所以我们反转的边界为(pre, lat),即不包含pre和lat
+	 */
+	reverseGroup (pre, lat) {
+		// lpre为每一次反转该组的第一个节点
+		let lpre = pre.next
+		// cur为每一次反转该组的第一个节点的下一个节点
+		let cur = lpre.next
+		// cur不为lat时，都还需要一个个第反转组中的每一个元素
+		while (cur !== lat) {
+			// 第一个节点指向下下一个节点，即同时断开了它指向原顺序中的下一个节点
+			lpre.next = cur.next
+			// 后一个节点之前前一个节点，即发生了反转
+			cur.next = pre.next
+			// 该组的头节点指向反转后的节点
+			pre.next = cur
+			// 移动cur，为下一轮反转该组中的下一个节点
+			cur = lpre.next
+		}
+		// 返回这一组反转后的最后一个节点
+		return lpre
 	}
 	// prepend a node to a linkList
 	/* @params value *
