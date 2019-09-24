@@ -111,6 +111,7 @@ function findMedian2(A, B) {
   }
 
   // 为运算 >> 1  -> 除以2取整
+  // // 割可以在最后一个位置，所以这里的imax为m
   let iMin = 0, iMax = m, half = (m + n + 1) >> 1, c1, c2;
 
   while (iMin <= iMax) {

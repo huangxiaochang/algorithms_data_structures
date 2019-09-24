@@ -114,6 +114,8 @@ function getMin(arr, pos) {
 // 	4。交换a,b。然后将替换点之后的数进行反转。
 // 	5。打印输出一种排序
 //  6。如果这个数达到最大，则结束循环
+//  即从最小数到最大数的所有组合即为这几个数字的所有组合
+
 function permutateWithStack (arr) {
 	let permutations = []
 	// 进行排序，即把所有的数排成一个最小数
@@ -145,7 +147,8 @@ function permutateWithStack (arr) {
 		arr[a] = arr[b]
 		arr[b] = temp
 
-		// 反转替换点之后的数据
+		// 因为替换之后，a后面的项的大小顺序并没有发生改变， 也非下一个最小的排列，所以反转替换点之后的数据，
+		// 这样既可保证是下一个最小的数
 		arr = arr.slice(0,a + 1).concat(arr.slice(a+1).reverse())
 		permutations.push(arr.slice(0))
 
