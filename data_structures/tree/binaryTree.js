@@ -490,6 +490,25 @@ class BinaryTree {
 		}
 		return true
 	}
+
+	// 比较两个二叉树的递归算法
+	static compareRecursive (tree1, tree2, compareFn=defaultCompareFn, onlyStructure=false) {
+		if (tree1 === null && tree2 === null) {
+			return true
+		}
+		if (tree1 === null || tree2 === null) {
+			return false
+		}
+		if (!onlyStructure) {
+			let valSame = compareFn(tree1.value, tree2.value) === 0
+			if (!valSame) {
+				return false
+			}
+		}
+		let leftSame = BinaryTree.compareRecursive(tree1.left, tree2.left, compareFn, onlyStructure)
+		let rightSame = BinaryTree.compareRecursive(tree1.right, tree2.right, compareFn, onlyStructure)
+		return leftSame && rightSame
+	}
 }
 
 var arrTree = new BinaryTree([1,2,3,4,5,undefined,6,undefined,undefined,7,8])
@@ -523,25 +542,25 @@ var objTree2 = new BinaryTree({
 		},
 		right: {
 			value: 5,
-			left: 8,
-			right: 7
+			left: 7,
+			right: 8
 		}
 	},
 	right: {
 		value: 3,
-		left: 6
+		right: 6
 	}
 })
 
 var objTree3 = new BinaryTree()
 var objTree4 = new BinaryTree()
 
-// console.log(BinaryTree.compare(objTree1,objTree2,undefined, true))
-// console.log(BinaryTree.compare(objTree1,objTree3,undefined, true))
-// console.log(BinaryTree.compare(objTree4,objTree3,undefined, true))
+console.log(BinaryTree.compareRecursive(objTree1.root,objTree2.root,undefined, false))
+console.log(BinaryTree.compareRecursive(objTree1.root,objTree3.root,undefined, true))
+console.log(BinaryTree.compareRecursive(objTree4.root,objTree3.root,undefined, true))
 
-console.log(objTree1)
-console.log(objTree3)
+// console.log(objTree1)
+// console.log(objTree3)
 
 module.exports = {
 	BinaryTree
