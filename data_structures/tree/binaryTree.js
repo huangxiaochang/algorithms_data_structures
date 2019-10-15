@@ -1,12 +1,19 @@
 // 二叉树
+
+/*
+	二叉树性质：
+		1.二叉树第i层最多有2^(i - 1)个节点.
+		2.深度为k的二叉树至多有2^k - 1个节点
+		3.对于任意的一颗二叉树，叶子节点数n0为度为2的节点个数加1，即n0 = n2 + 1
+ */ 
 const { BinaryTreeNode } = require('./binaryTreeNode.js')
 const { defaultCompareFn, getValueType } = require('../../util.js')
 const cache = {}
 let id = 0
 
 class BinaryTree {
-	constructor (target, type, compareFn) {
-		let targetType = getValueType(target)
+	constructor (data, compareFn) {
+		let targetType = getValueType(data)
 		if (
 			targetType !== 'object' && 
 			targetType !== 'array' && 
@@ -18,14 +25,14 @@ class BinaryTree {
 		this.length = 0
 		this.root = targetType !== 'undefined'
 								? targetType === 'object'
-									? this.createBinaryTreeByObject(target)
-									: this.createBinaryTreeByArray(target)
+									? this.createBiTreeByObject(data)
+									: this.createBiTreeByLevel(data)
 								: null
 	}
 
 	// 通过数组来创建二叉树：空节点时，数组项要为undefined。规则为数组项依次对应树节点：从上到下，
-	// 从左到右
-	createBinaryTreeByArray (arr) {
+	// 从左到右，即按层级次序创建。
+	createBiTreeByLevel (arr) {
 		let tree = null,
 				node = null,
 				leftNode = null,
@@ -52,7 +59,6 @@ class BinaryTree {
 				} else {
 					leftNode = null
 				}
-				if (leftNode) { leftNode.parent = node}
 				nodeList.push(leftNode)
 				node.left = leftNode
 
@@ -63,7 +69,6 @@ class BinaryTree {
 				} else {
 					rightNode = null
 				}
-				if (rightNode) { rightNode.parent = node}
 				nodeList.push(rightNode)
 				node.right = rightNode
 			}
@@ -74,7 +79,7 @@ class BinaryTree {
 
 	// 通过对象的形式创建一个二叉树，规则：
 	// 节点的值使用value字段表示，left/right分布表示左右孩子
-	createBinaryTreeByObject (obj) {
+	createBiTreeByObject (obj) {
 		if (obj !== null && getValueType(obj) !== 'object') {
 			throw new TypeError("param must be an object")
 		}
@@ -90,7 +95,6 @@ class BinaryTree {
 				let { parent, child, data } = queue.shift()
 				let node = new BinaryTreeNode(data.value || data)
 				this.length++
-				node.parent = parent
 				if (!parent) { 
 					tree = node 
 					parent = node
@@ -121,6 +125,55 @@ class BinaryTree {
 		return tree
 	}
 
+	// 通过先序和中序次序创建二叉树
+	static createByPreAndInOrder (preOrder, inOrder) {
+		if (!preOrder instanceof Array || !inOrder instanceof Array) {
+			throw new TypeError("param must be an array") 
+		}
+		var tree = new BinaryTree()
+		tree.length = preOrder.length
+		tree.root = tree._preAndInOrder(preOrder, inOrder)
+		return tree
+	}
+
+	_preAndInOrder (preOrder, inOrder) {
+		if (preOrder.length) {
+			// root
+			var node = new BinaryTreeNode(preOrder[0])
+			var pos = inOrder.indexOf(preOrder[0])
+			// 创建左树
+			node.left = this._preAndInOrder(preOrder.slice(1, pos + 1), inOrder.slice(0, pos))
+			// 创建右树
+			node.right = this._preAndInOrder(preOrder.slice(pos + 1), inOrder.slice(pos + 1))
+			return node
+		} else {
+			return null
+		}
+	}
+
+	// 通过后序和中序次序创建二叉树
+	static createByPostAndInOrder (postOrder, inOrder) {
+		if (!postOrder instanceof Array || !inOrder instanceof Array) {
+			throw new TypeError("param must be an array") 
+		}
+		var tree = new BinaryTree()
+		tree.length = postOrder.length
+		tree.root = tree._postAndInorder(postOrder, inOrder)
+		return tree
+	}
+
+	_postAndInorder (postOrder, inOrder) {
+		var len = postOrder.length
+		if (len > 0) {
+			var node = new BinaryTreeNode(postOrder[len - 1])
+			var pos = inOrder.indexOf(postOrder[len - 1])
+			node.left = this._postAndInorder(postOrder.slice(0, pos), inOrder.slice(0, pos))
+			node.right = this._postAndInorder(postOrder.slice(pos, len - 1), inOrder.slice(pos + 1))
+			return node
+		} else {
+			return null
+		}
+	}
 
 	// 节点比较函数: 自定义的比较函数规则：
 	// 如果是相等，则返回0，如果是大于，则返回1，否者返回-1
@@ -151,7 +204,7 @@ class BinaryTree {
 	}
 
 	// 先序优先遍历（深度优先遍历）
-	preTraversal (node) {
+	preOrderTraverse (node) {
 		node = node instanceof BinaryTreeNode ? node : this.root
 		if (node === null) { return [] }
 		let ret = []
@@ -169,7 +222,7 @@ class BinaryTree {
 	// 1.对任意节点，都可看成根节点，因此可以直接访问， 然后入栈。
 	// 2.若其左孩子不为空，设当前节点为左孩子节点，按照相同的规则访问它的左树
 	// 3.若其左孩子为空，则出栈，并设置当前节点为右孩子，然后按照相同的规则访问其右孩子
-	preNonRecursive (node) {
+	preOrderTraverseWithoutRecursive (node) {
 		node = node instanceof BinaryTreeNode ? node : this.root
 		const ret = []
 		// 用来收集访问过的节点，只要是为了之后访问它的右孩子
@@ -188,9 +241,8 @@ class BinaryTree {
 		return ret
 	}
 
-
 	// 中序优先遍历
-	middleTraversal (node) {
+	inOrderTraverse (node) {
 		node = node instanceof BinaryTreeNode ? node : this.root
 		if (node === null) { return [] }
 		let ret = []
@@ -206,7 +258,7 @@ class BinaryTree {
 
 	// 中序遍历非递归算法：
 	// 中序遍历非递归算法的思路和先序非递归算法是一样的，只不过是要在出栈的时候，才访问节点
-	middleNonRecursive (node) {
+	inOrderTraverseWithoutRecursive (node) {
 		node = node instanceof BinaryTreeNode ? node : this.root
 		const ret = []
 		const stack = []
@@ -224,7 +276,7 @@ class BinaryTree {
 	}
 
 	// 后序优先遍历
-	postTraversal (node) {
+	postOrderTraverse (node) {
 		node = node instanceof BinaryTreeNode ? node : this.root
 		if (node === null) { return [] }
 		let ret = []
@@ -246,7 +298,7 @@ class BinaryTree {
 	// 2.然后按照相同的规则处理栈顶节点的右孩子。
 	// 3.在这个过程之中，可以发现每个节点都会出现在栈顶两次，所以可以设置一个标记位，只有该节点是第二次
 	// 出现在栈顶时，才对他进行访问。
-	postNonRecursive1 (node) {
+	postOrderTraverseWithoutRecursive1 (node) {
 		node = node instanceof BinaryTreeNode ? node : this.root
 		let ret = []
 		const stack = []
@@ -279,7 +331,7 @@ class BinaryTree {
 	// 2.如果栈顶元素没有孩子节点或者它的左右孩子都访问过，则访问它，然后出栈。
 	// 3.否者将其存在的右孩子和左孩子依次入栈。
 	// （右孩子先入栈再到左孩子，这样出栈为先左后右，即可保证先访问左再右）
-	postNonRecursive2 (node) {
+	postOrderTraverseWithoutRecursive2 (node) {
 		node = node instanceof BinaryTreeNode ? node : this.root
 		let ret = []
 		const stack = [node]
@@ -314,27 +366,37 @@ class BinaryTree {
 	// 查找某个孩子节点:
 	// 可以使用前面的遍历方法来查找，找到的时候，则提前结束。
 	// 此处用前序遍历的递归算法查找某个孩子节点
-	findChild (value, start) {
-		start = start instanceof BinaryTreeNode ? start : this.root
-		let node = start
+	findChild (value, node) {
+		node = node instanceof BinaryTreeNode ? node : this.root
+		let ret = []
 		const stack = []
-		const ret = []
 		while (node || stack.length) {
-			if (node) {
+			// 沿着左树访问到底,依次将他们入栈,并设置他们为第一次出现在栈顶
+			while (node) {
 				ret.push(node)
 				if (this.nodeCompareFn(node.value, value) === 0) {
-					break
+					return ret
 				}
+				node.meta.isFirst = true
 				stack.push(node)
 				node = node.left
-			} else {
-				node = stack.pop().right
+			}
+			if (stack.length) {
+				const topNode = stack[stack.length - 1]
+				// 如果是第一次出现在栈顶，则继续按照相同的规则处理它的右树，并把标记位改成不是第一次
+				if (topNode.meta.isFirst) {
+					topNode.meta.isFirst = false
+					node = topNode.right
+				} else {
+					// 如果是第二次出现在栈顶，则访问它,并出栈,然后处理下一个栈顶节点
+					stack.pop()
+					// 如果它的左右孩子都没有包含目标，则移出路径
+					ret.pop()
+					node = null
+				}
 			}
 		}
-		return {
-			path: ret,
-			node: (ret.length === 0 ? null : ret[ret.length - 1])
-		}
+		return ret
 	}
 
 	// 获取某个节点的层级:
@@ -509,58 +571,8 @@ class BinaryTree {
 		let rightSame = BinaryTree.compareRecursive(tree1.right, tree2.right, compareFn, onlyStructure)
 		return leftSame && rightSame
 	}
+
 }
-
-var arrTree = new BinaryTree([1,2,3,4,5,undefined,6,undefined,undefined,7,8])
-
-console.log(arrTree)
-
-var objTree1 = new BinaryTree({
-	value: 1,
-	left: {
-		value: 2,
-		left: {
-			value: 4
-		},
-		right: {
-			value: 5,
-			left: 7,
-			right: 8
-		}
-	},
-	right: {
-		value: 3,
-		right: 6
-	}
-})
-var objTree2 = new BinaryTree({
-	value: 1,
-	left: {
-		value: 2,
-		left: {
-			value: 4
-		},
-		right: {
-			value: 5,
-			left: 7,
-			right: 8
-		}
-	},
-	right: {
-		value: 3,
-		right: 6
-	}
-})
-
-var objTree3 = new BinaryTree()
-var objTree4 = new BinaryTree()
-
-console.log(BinaryTree.compareRecursive(objTree1.root,objTree2.root,undefined, false))
-console.log(BinaryTree.compareRecursive(objTree1.root,objTree3.root,undefined, true))
-console.log(BinaryTree.compareRecursive(objTree4.root,objTree3.root,undefined, true))
-
-// console.log(objTree1)
-// console.log(objTree3)
 
 module.exports = {
 	BinaryTree
