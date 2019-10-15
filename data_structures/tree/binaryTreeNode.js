@@ -7,7 +7,7 @@ class BinaryTreeNode {
 		this.value = value
 		this.left = null
 		this.right = null
-		this.meta = {}
+		this.meta = {} // 用于储存其他的信息，如线索二叉树中的LTag, RTag标记等
 	}
 
 	setValue(value) {
