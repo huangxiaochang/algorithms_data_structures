@@ -1,4 +1,5 @@
 var { BinaryTree } = require('./binaryTree.js')
+var { BiThreadTree } = require('./biThreadTree')
 
 var arrTree = new BinaryTree([1,2,3,4,5,undefined,6,undefined,undefined,7,8])
 
@@ -41,20 +42,45 @@ var objTree2 = new BinaryTree({
 	}
 })
 
-var objTree3 = new BinaryTree()
+var objTree3 = new BinaryTree({
+	value: '-',
+	left: {
+		value: '+',
+		left: 'a',
+		right: {
+			value: '*',
+			left: 'b',
+			right: {
+				value: '-',
+				left: 'c',
+				right: 'd'
+			}
+		}
+	},
+	right: {
+		value: '/',
+		left: 'e',
+		right: 'f'
+	}
+})
+
 var objTree4 = new BinaryTree()
 
-// console.log(BinaryTree.compareRecursive(objTree1.root,objTree2.root,undefined, false))
-// console.log(BinaryTree.compareRecursive(objTree1.root,objTree3.root,undefined, true))
-// console.log(BinaryTree.compareRecursive(objTree4.root,objTree3.root,undefined, true))
+var threadTree = new BiThreadTree()
 
-// console.log(objTree1)
-// console.log(objTree3)
+// console.log(objTree3.root)
 
-// var tree1 = BinaryTree.createByPreAndInOrder(['a','b','c','d','e','g','f'], ['c','b','e','g','d','f','a'])
-var tree2 = BinaryTree.createByPostAndInOrder(['c','g','e','f','d','b','a'], ['c','b','e','g','d','f','a'])
-// console.log(tree1)
-// console.log(tree2)
-console.log(tree2.findChild('c'))
+threadTree.inOrderThreading(objTree3.root)
+console.log(threadTree.inOrderTraverseThr())
+// console.log(threadTree.getPreWithInOrderThr(threadTree.root.left))
+
+var fs = require('fs')
+
+function printToFile (filename, obj) {
+	var jsonText = JSON.stringify(obj, null, '\t');
+  fs.writeFileSync(fileName, jsonText, 'utf8');   
+}
+
+// printToFile('test.txt',threadTree)
 
 
