@@ -1,5 +1,6 @@
 var { BinaryTree } = require('./binaryTree.js')
 var { BiThreadTree } = require('./biThreadTree')
+var { BinarySortTree } = require('./binarySortTree.js')
 
 var arrTree = new BinaryTree([1,2,3,4,5,undefined,6,undefined,undefined,7,8])
 
@@ -70,8 +71,8 @@ var threadTree = new BiThreadTree()
 
 // console.log(objTree3.root)
 
-threadTree.inOrderThreading(objTree3.root)
-console.log(threadTree.inOrderTraverseThr())
+// threadTree.inOrderThreading(objTree3.root)
+// console.log(threadTree.inOrderTraverseThr())
 // console.log(threadTree.getPreWithInOrderThr(threadTree.root.left))
 
 var fs = require('fs')
@@ -82,5 +83,16 @@ function printToFile (filename, obj) {
 }
 
 // printToFile('test.txt',threadTree)
+
+var sortTree = new BinarySortTree()
+console.log(sortTree.searchBST(1))
+sortTree.insertBST(45)
+sortTree.insertBST([24, 53, 12, 28, 90])
+// console.log(sortTree)
+// sortTree.deleteBST([28, 45])
+// console.log(sortTree.searchBST(53))
+// console.log(sortTree.inOrderTraverse())
+console.log(sortTree.findChild(45))
+
 
 

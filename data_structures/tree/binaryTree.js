@@ -31,7 +31,7 @@ class BinaryTree {
 	}
 
 	// 通过数组来创建二叉树：空节点时，数组项要为undefined。规则为数组项依次对应树节点：从上到下，
-	// 从左到右，即按层级次序创建。
+	// 从左到右，即按层级次序创建。注意，不太适用于很多空节点的二叉树的结构，因为这样列表的中空项会很多
 	createBiTreeByLevel (arr) {
 		let tree = null,
 				node = null,
@@ -210,10 +210,10 @@ class BinaryTree {
 		let ret = []
 		ret.push(node)
 		if (node.left) {
-			ret = ret.concat(this.preTraversal(node.left))
+			ret = ret.concat(this.preOrderTraverse(node.left))
 		}
 		if (node.right) {
-			ret = ret.concat(this.preTraversal(node.right))
+			ret = ret.concat(this.preOrderTraverse(node.right))
 		}
 		return ret
 	}
@@ -247,11 +247,11 @@ class BinaryTree {
 		if (node === null) { return [] }
 		let ret = []
 		if (node.left) {
-			ret = ret.concat(this.middleTraversal(node.left))
+			ret = ret.concat(this.inOrderTraverse(node.left))
 		}
 		ret.push(node)
 		if (node.right) {
-			ret = ret.concat(this.middleTraversal(node.right))
+			ret = ret.concat(this.inOrderTraverse(node.right))
 		}
 		return ret
 	}
@@ -281,10 +281,10 @@ class BinaryTree {
 		if (node === null) { return [] }
 		let ret = []
 		if (node.left) {
-			ret = ret.concat(this.postTraversal(node.left))
+			ret = ret.concat(this.postOrderTraverse(node.left))
 		}
 		if (node.right) {
-			ret = ret.concat(this.postTraversal(node.right))
+			ret = ret.concat(this.postOrderTraverse(node.right))
 		}
 		ret.push(node)
 		return ret
