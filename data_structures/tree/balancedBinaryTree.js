@@ -70,22 +70,21 @@ class BalancedBinaryTree extends BinaryTree {
 				// 继续在右子树中插入
 				if (tree.right) {
 					if (this.insertAVL(value, tree.right)) {
-						// 如果已经在右子树插入，该结点平衡因子减1
-						if (this.nodeCompareFn(value, tree.value) === 1) {
-							tree.meta.bf -= 1
-						} else {
-							tree.meta.bf = 1
-						}
+						// 如果已经在右子树插入，该结点平衡因子减1(非直接插入的父结点，直接被插入的父结点的平衡度在
+							// 插入时调整)
+						tree.meta.bf -= 1
 						// 递归回退时，要处理平衡树失衡
 						if (tree.meta.bf < -1) {
+							// 在失衡结点的右子树的根结点的右子树上插入节点
 							if (tree.right.meta.bf === -1) {
 								// 调整结点的平衡因子
 								tree.meta.bf = 0
 								tree.right.meta.bf = 0
 								// 进行单左旋转,并调整结点平衡因子
 								this.LLRotate(tree)
-							} else {
-							// 进行先右后左旋转,并调整结点平衡因子
+							} else if (tree.right.meta.bf === 1) {
+								// 在失衡结点的右子树的根节点的左子树上插入结点
+								// 进行先右后左旋转,并调整结点平衡因子
 								this.RLRotate(tree)
 							}
 						}
@@ -97,6 +96,8 @@ class BalancedBinaryTree extends BinaryTree {
 					const node = new BinaryTreeNode(value)
 					node.meta.bf = 0 // 该节点的平衡因子
 					tree.right = node
+					// 被插入的父结点平衡度减1
+					tree.meta.bf -= 1
 					return true
 				}
 			} else {
@@ -104,20 +105,20 @@ class BalancedBinaryTree extends BinaryTree {
 				if (tree.left) {
 					// 如果已经在左子树插入新节点
 					if (this.insertAVL(value, tree.left)) {
-						if (this.nodeCompareFn(value, tree.value) === -1) {
-							tree.meta.bf += 1
-						} else {
-							tree.meta.bf = -1
-						}
+						// 如果已经在左子树插入，该结点平衡因子假1(非直接插入的父结点，直接被插入的父结点的平衡度在
+						// 插入时调整)
+						tree.meta.bf += 1
 						// 递归回退时，要处理平衡树失衡
 						if (tree.meta.bf > 1) {
+							// 失衡结点的左子树的根节点的左子树上插入
 							if (tree.left.meta.bf === 1) {
 								// 调整结点的平衡因子
 								tree.meta.bf = 0
 								tree.left.meta.bf = 0
-								// 进行单左旋转,并调整结点平衡因子
+								// 进行单右旋转,并调整结点平衡因子
 								this.RRRotate(tree)
-							} else {
+							} else if (tree.left.meta.bf === -1) {
+								// 在失衡结点的左子树的根结点的右子树上插入节点
 							// 进行先左后右旋转,并调整结点平衡因子
 								this.LRRotate(tree)	
 							}
@@ -130,6 +131,7 @@ class BalancedBinaryTree extends BinaryTree {
 					const node = new BinaryTreeNode(value)
 					node.meta.bf = 0 // 该节点的平衡因子
 					tree.left = node
+					tree.meta.bf += 1
 					return true
 				}
 			}
@@ -158,22 +160,24 @@ class BalancedBinaryTree extends BinaryTree {
 	// 先右后左旋转， tree为最小失衡的子树的根节点
 	RLRotate (tree) {
 		// 调整结点平衡因子
-		const lc = tree.right
-		const rd = lc.left
-		switch (rd.meta.bf) {
+		const rd = tree.right
+		const lc = rd.left
+		switch (lc.meta.bf) {
 			case 1:
 				tree.meta.bf = 0
-				lc.meta.bf = -1
+				rd.meta.bf = -1
 				break
 			case 0:
 				tree.meta.bf = 0
-				lc.meta.bf = 0
+				rd.meta.bf = 0
 				break
 			case -1:
 				tree.meta.bf = 1
-				lc.meta.bf = 0
+				rd.meta.bf = 0
 				break
 		}
+		// 被插入的父级节点会平衡
+		lc.meta.bf = 0
 		this.RRRotate(tree.right)
 		this.LLRotate(tree)
 	}
@@ -201,7 +205,7 @@ class BalancedBinaryTree extends BinaryTree {
 	LRRotate (tree) {
 		// 调整结点平衡因子
 		const lc = tree.left
-		const rd = cl.right
+		const rd = lc.right
 		switch (rd.meta.bf) {
 			case 1:
 				tree.meta.bf = -1

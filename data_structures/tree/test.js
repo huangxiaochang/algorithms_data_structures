@@ -105,6 +105,6 @@ list = avl.inOrderTraverse()
 console.log(avl)
 console.log('----')
 for(let p of list) {
-	// console.log(p, p.meta.bf)
+	console.log(p, p.meta.bf)
 }
 
