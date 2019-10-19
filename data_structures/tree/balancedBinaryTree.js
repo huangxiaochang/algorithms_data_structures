@@ -70,11 +70,8 @@ class BalancedBinaryTree extends BinaryTree {
 				// 继续在右子树中插入
 				if (tree.right) {
 					if (this.insertAVL(value, tree.right)) {
-						// 如果已经在右子树插入，该结点平衡因子减1(非直接插入的父结点，直接被插入的父结点的平衡度在
-							// 插入时调整)
-						tree.meta.bf -= 1
-						// 递归回退时，要处理平衡树失衡
-						if (tree.meta.bf < -1) {
+						// 递归回退时，如果没有插入之前，该结点的右树已经高与左树，则需要调整平衡
+						if (tree.meta.bf === -1) {
 							// 在失衡结点的右子树的根结点的右子树上插入节点
 							if (tree.right.meta.bf === -1) {
 								// 调整结点的平衡因子
@@ -87,6 +84,9 @@ class BalancedBinaryTree extends BinaryTree {
 								// 进行先右后左旋转,并调整结点平衡因子
 								this.RLRotate(tree)
 							}
+						} else {
+							// 已经插入到右树中，所以平衡因子要减1，即该结点为树要向右长高
+							tree.meta.bf -= 1
 						}
 						return true
 					}
@@ -96,7 +96,7 @@ class BalancedBinaryTree extends BinaryTree {
 					const node = new BinaryTreeNode(value)
 					node.meta.bf = 0 // 该节点的平衡因子
 					tree.right = node
-					// 被插入的父结点平衡度减1
+					// 被插入的父结点要向右长高
 					tree.meta.bf -= 1
 					return true
 				}
@@ -105,11 +105,8 @@ class BalancedBinaryTree extends BinaryTree {
 				if (tree.left) {
 					// 如果已经在左子树插入新节点
 					if (this.insertAVL(value, tree.left)) {
-						// 如果已经在左子树插入，该结点平衡因子假1(非直接插入的父结点，直接被插入的父结点的平衡度在
-						// 插入时调整)
-						tree.meta.bf += 1
-						// 递归回退时，要处理平衡树失衡
-						if (tree.meta.bf > 1) {
+						// 递归回退时，如果之前的左树已经比右树高，则要平衡化处理
+						if (tree.meta.bf === 1) {
 							// 失衡结点的左子树的根节点的左子树上插入
 							if (tree.left.meta.bf === 1) {
 								// 调整结点的平衡因子
@@ -122,6 +119,9 @@ class BalancedBinaryTree extends BinaryTree {
 							// 进行先左后右旋转,并调整结点平衡因子
 								this.LRRotate(tree)	
 							}
+						} else {
+							// 如果已经插入左子树，当还没达到失衡，则以该结点为树要向左长高
+							tree.meta.bf += 1
 						}
 						return true
 					}
@@ -131,6 +131,7 @@ class BalancedBinaryTree extends BinaryTree {
 					const node = new BinaryTreeNode(value)
 					node.meta.bf = 0 // 该节点的平衡因子
 					tree.left = node
+					// 父结点要向左树长高
 					tree.meta.bf += 1
 					return true
 				}
@@ -178,7 +179,9 @@ class BalancedBinaryTree extends BinaryTree {
 		}
 		// 被插入的父级节点会平衡
 		lc.meta.bf = 0
+		// 先右旋其右子树
 		this.RRRotate(tree.right)
+		// 再左旋该树
 		this.LLRotate(tree)
 	}
 
@@ -221,7 +224,9 @@ class BalancedBinaryTree extends BinaryTree {
 				break
 		}
 		rd.meta.bf = 0
+		// 向左旋其左树
 		this.LLRotate(tree.left)
+		// 再右旋该树
 		this.RRRotate(tree)
 	}
 
