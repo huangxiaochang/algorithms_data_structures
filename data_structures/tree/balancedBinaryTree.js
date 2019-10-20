@@ -16,6 +16,7 @@ class BalancedBinaryTree extends BinaryTree {
 		super(data, compareFn)
 	}
 
+	// 在平衡二叉树上搜索某一个节点，needLocation为true,会返回找到的节点和父节点，否者只会返回true/false
 	searchAVL (val, needLocation = false, compareFn) {
 		compareFn = compareFn || this.nodeCompareFn
 
@@ -134,6 +135,101 @@ class BalancedBinaryTree extends BinaryTree {
 					// 父结点要向左树长高
 					tree.meta.bf += 1
 					return true
+				}
+			}
+		}
+	}
+
+	// 将一个结点从平衡二叉树中删除
+	deleteAVL (value, tree=this.root, parent=null) {
+		if (!tree) { return false}
+		const flag = this.nodeCompareFn(value, tree.value)
+
+		if (flag === 1 ) {
+			// 在右子树中删除
+			this.deleteAVL(value, tree.right)
+		} else if (flag === -1) {
+			// 在左子树中删除
+			this.deleteAVL(value, tree.left)
+		} else {
+			// 删除该节点，并调整
+			if (parent === null) {
+				// 删除的是根节点
+				
+			} else {
+				if (this.nodeCompareFn(value, parent.value) === 1) {
+					// 要删除的节点
+					const del = parent.right
+					if (del.left && del.right) {
+
+					} else if (del.left || del.right) {
+						parent.right = del.left || del.right
+					} else {
+						parent.right = null
+					}
+					// 删除为右结点，父节点要向左长高
+					parent.meta.bf += 1
+					return true
+				} else {
+					const del = parent.left
+					if (del.left && del.right) {
+						let new_del = null
+						// 如果该节点的平衡因子为0或者1，则找到其左子树最大节点作为新的删除结点
+						if (del.meta.bf === -1) {
+							new_del = BalancedBinaryTree.findMaxOrMin(del.right, false/*isMax*/)
+							// 新旧删除结点内容交换，只交换内容，不交换平衡因子
+							del.value = new_del.node.value
+							// 然后删除新的结点
+							this.deleteAVL(value, del.right, del)
+						} else {
+							new_del = BalancedBinaryTree.findMaxOrMin(del.left, true/*isMax*/)
+							// 新旧删除结点内容交换，只交换内容，不交换平衡因子
+							del.value = new_del.node.value
+							// 然后删除新的结点
+							this.deleteAVL(value, del.left, del)
+						}
+					} else if (del.left || del.right) {
+						parent.left = del.left || del.right
+					} else {
+						parent.left = null
+					}
+					// 删除为左节点，父节点要向右长高
+					parent.meta.bf -= 1
+					return true
+				}
+			}
+		}
+	}
+
+	// 在一颗平衡二叉树中，找到最大或者最小的节点, 返回该节点和其父节点
+	static findMaxOrMin (tree, isMax=true) {
+		if (!tree) {
+			return {
+				parent: null,
+				node: null
+			}
+		}
+		let parent = null
+		while (tree) {
+			if (isMax) {
+				if (tree.right) {
+					parent = tree
+					tree = tree.right
+				} else {
+					return {
+						parent: parent,
+						node: tree
+					}
+				}
+			} else {
+				if (tree.left) {
+					parent = tree
+					tree = tree.left
+				} else {
+					return {
+						parent: parent,
+						node: tree
+					}
 				}
 			}
 		}
