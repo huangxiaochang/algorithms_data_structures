@@ -242,3 +242,198 @@ if (typeof module !== 'undefined') {
 		clone
 	}
 }
+
+// 兼容数组和对象的的深度拷贝
+
+function isArrAndObj (val) {
+  if (val instanceof Array || 
+    val !== null && typeof val === 'object'
+  ) {
+    return true
+  }
+  return false
+}
+
+function findCopy (cache, target) {
+  for(let obj of cache) {
+    if (obj.key === target) {
+      return obj.copyObj
+    }
+  }
+  return null
+}
+
+// 使用递归进行深度复制，可能会存在调用栈溢出
+function deepCopy (obj, cache=[]) {
+  if (!isArrAndObj(obj)) {
+    // 只处理数组或者纯对象
+    return obj
+  }
+
+  // 避免循环引用
+  let cacheData = findCopy(cache, obj)
+
+  if (cacheData) {
+    return cacheData
+  }
+
+  const ret = obj instanceof Array ? [] : {}
+  // 增加缓存
+  cache.push({
+    copyObj: ret,
+    key: obj
+  })
+
+  // copy es6 symbol
+  const skeys = Object.getOwnPropertySymbols(obj)
+  for (let sk of skeys) {
+    var val = obj[sk]
+    if (isArrAndObj(val)) {
+      ret[sk] = deepCopy(val, cache)
+    } else {
+      ret[sk] = val
+    }
+  }
+
+  if (obj instanceof Array) {
+    for(let val of obj) {
+      if (isArrAndObj(val)) {
+        ret.push(deepCopy(val, cache))
+      } else {
+        ret.push(val)
+      }
+    }
+    return ret
+  } else {
+    const keys = Object.keys(obj)
+    for(let k of keys) {
+      var val = obj[k]
+      if (isArrAndObj(val)) {
+        ret[k] = deepCopy(val, cache)
+      } else {
+        ret[k] = val
+      }
+    }
+    return ret
+  }
+}
+
+function deepClone (obj) {
+  if (!isArrAndObj(obj)) {
+    return obj
+  }
+  const ret = obj instanceof Array ? [] : {}
+  const stack = [
+    {
+      parent: ret,
+      key: undefined, // 用于避免循环引用
+      data: obj
+    }
+  ]
+
+  const cache = []
+
+  while (stack.length) {
+    let { parent, key, data } = stack.pop()
+
+    const cacheData = findCopy(cache, data)
+    if (cacheData) {
+    	// 避免循环引用
+      parent[key] = cacheData
+      continue
+    }
+    cache.push({
+      copyObj: parent,
+      key: data
+    })
+
+    // 这里同步兼容了数组，如果是数组，则keys = ['0', '1', ...]
+    const keys = Object.keys(data)
+    
+    for(let k of keys) {
+      let val = data[k]
+      if (isArrAndObj(val)) {
+        const res = val instanceof Array ? [] : {}
+        // 对象或者数组
+        parent[k] = res
+        stack.push({
+          parent: res,
+          key: k,
+          data: val
+        })
+      } else {
+        parent[k] = val
+      }
+    }
+
+    // 处理键为Symbol的情况
+    const skeys = Object.getOwnPropertySymbols(data)
+    for (let sk of skeys) {
+      let val = data[sk]
+      if (isArrAndObj(val)) {
+        const res = val instanceof Array ? [] : {}
+        parent[sk] = res
+        stack.push({
+          parent: res,
+          key: sk,
+          data: val
+        })
+      } else {
+        parent[sk] = val
+      }
+    }
+
+  }
+  return ret
+}
+
+var obj1 = {
+  g: 1,
+}
+
+obj1.o = obj1
+
+var obj = {
+  a: 1,
+  b: '2',
+  c: null,
+  d: function () {},
+  e: undefined,
+  f: true,
+  g: [1, {'a': '22'}],
+  h: obj1,
+  [Symbol('33')]: 'symbol',
+  m: {
+    y: 0,
+    [Symbol('11')]: {
+      k: 'ee'
+    }
+  }
+}
+
+var arr = [
+  1,
+  '3',
+  {
+    'a': 3,
+    'b': [3, {g: 5}]
+  },
+  obj1,
+  null,
+  function function_name(argument) {
+    // body...
+  },
+  true,
+  undefined,
+  Symbol('33'),
+  {
+    [Symbol('11')]: 22332,
+    v: 65
+  }
+]
+var a = {
+}
+a.b = a
+var copyObj = deepClone(a)
+console.log(copyObj, copyObj === a)
+
