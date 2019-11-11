@@ -147,7 +147,11 @@ function cloneDeep (obj) {
 					}
 				})
 			} else {
-				for (let k of Object.keys(data)) {
+				// 处理键为Symbol的情况
+	    	const skeys = Object.getOwnPropertySymbols(data)
+
+				let keys = [...Object.keys(data), ...skeys]
+				for (let k of keys) {
 					let val = data[k]
 					let type = getValType(val)
 					if (isPrimitiveValue(val)) {
@@ -176,12 +180,13 @@ var obj = {
 	a: /\d/gim,
 	b: true,
 	c: 12,
+	[Symbol()]: 'w43e',
 	d: 'we',
 	e: function () {},
 	f: null,
 	g: undefined,
-	r: new Set([2, {a: 22, b: [3,{y: '66'}]}]),
-	h: new Map([['a','09']]),
+	r: new Set([2, {a: 22, b: [3,{y: '66'}]}, Symbol(11)]),
+	h: new Map([['a','09'], [Symbol(22), 444]]),
 	k: Symbol('tt'),
 	w: new Date(),
 	l: () => {
