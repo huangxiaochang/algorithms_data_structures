@@ -264,12 +264,33 @@ class BinaryTree {
 		const stack = []
 		while (node || stack.length) {
 			if (node) {
-				stack.push(node)
-				node = node.left
+				stack.push(node) // 根指针进栈
+				node = node.left // 继续访问左子树
 			} else {
+				// 根指针退栈
 				node = stack.pop()
-				ret.push(node)
-				node = node.right
+				ret.push(node) // 访问节点
+				node = node.right // 继续访问根指针的右子树
+			}
+		}
+		return ret
+	}
+
+	// 中序遍历非递归算法的第二种方法，与第一种不同的是，空指针也会进栈，当栈顶元素为空指针时，会
+	// 进行退栈
+	inOrderTraverseWithoutRecursive2 (node=this.root) {
+		const stack = [node]
+		const ret = [] // 根指针入栈
+		while (stack.length) {
+			let p = null
+			while((p = stack[stack.length - 1])) {
+				stack.push(p.left) // 向左走到尽头
+			}
+			stack.pop() // 空指针退栈
+			if (stack.length) {
+				p = stack.pop() // 根指针退栈
+				ret.push(p.value) // 访问节点
+				stack.push(p.right) // 根指针右孩子入栈
 			}
 		}
 		return ret

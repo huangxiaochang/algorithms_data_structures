@@ -5,70 +5,72 @@ var { BalancedBinaryTree } = require('./balancedBinaryTree.js')
 
 var arrTree = new BinaryTree([1,2,3,4,5,undefined,6,undefined,undefined,7,8])
 
-// console.log(arrTree)
+console.log(arrTree)
 
-var objTree1 = new BinaryTree({
-	value: 1,
-	left: {
-		value: 2,
-		left: {
-			value: 4
-		},
-		right: {
-			value: 5,
-			left: 7,
-			right: 8
-		}
-	},
-	right: {
-		value: 3,
-		right: 6
-	}
-})
-var objTree2 = new BinaryTree({
-	value: 1,
-	left: {
-		value: 2,
-		left: {
-			value: 4
-		},
-		right: {
-			value: 5,
-			left: 7,
-			right: 8
-		}
-	},
-	right: {
-		value: 3,
-		right: 6
-	}
-})
+console.log(arrTree.inOrderTraverseWithoutRecursive2(), 9999)
 
-var objTree3 = new BinaryTree({
-	value: '-',
-	left: {
-		value: '+',
-		left: 'a',
-		right: {
-			value: '*',
-			left: 'b',
-			right: {
-				value: '-',
-				left: 'c',
-				right: 'd'
-			}
-		}
-	},
-	right: {
-		value: '/',
-		left: 'e',
-		right: 'f'
-	}
-})
+// var objTree1 = new BinaryTree({
+// 	value: 1,
+// 	left: {
+// 		value: 2,
+// 		left: {
+// 			value: 4
+// 		},
+// 		right: {
+// 			value: 5,
+// 			left: 7,
+// 			right: 8
+// 		}
+// 	},
+// 	right: {
+// 		value: 3,
+// 		right: 6
+// 	}
+// })
+// var objTree2 = new BinaryTree({
+// 	value: 1,
+// 	left: {
+// 		value: 2,
+// 		left: {
+// 			value: 4
+// 		},
+// 		right: {
+// 			value: 5,
+// 			left: 7,
+// 			right: 8
+// 		}
+// 	},
+// 	right: {
+// 		value: 3,
+// 		right: 6
+// 	}
+// })
 
-var objTree4 = new BinaryTree()
+// var objTree3 = new BinaryTree({
+// 	value: '-',
+// 	left: {
+// 		value: '+',
+// 		left: 'a',
+// 		right: {
+// 			value: '*',
+// 			left: 'b',
+// 			right: {
+// 				value: '-',
+// 				left: 'c',
+// 				right: 'd'
+// 			}
+// 		}
+// 	},
+// 	right: {
+// 		value: '/',
+// 		left: 'e',
+// 		right: 'f'
+// 	}
+// })
 
-var threadTree = new BiThreadTree()
+// var objTree4 = new BinaryTree()
+
+// var threadTree = new BiThreadTree()
 
 // console.log(objTree3.root)
 
@@ -95,17 +97,17 @@ function printToFile (filename, obj) {
 // console.log(sortTree.inOrderTraverse())
 // console.log(sortTree.findChild(45))
 
-var avl = new BalancedBinaryTree()
-avl.insertAVL(13)
-avl.insertAVL(24)
-avl.insertAVL(37)
-avl.insertAVL(90)
-avl.insertAVL(53)
-avl.insertAVL(40)
-list = avl.inOrderTraverse()
-console.log(avl)
-console.log('----')
-for(let p of list) {
-	console.log(p, p.meta.bf)
-}
+// var avl = new BalancedBinaryTree()
+// avl.insertAVL(13)
+// avl.insertAVL(24)
+// avl.insertAVL(37)
+// avl.insertAVL(90)
+// avl.insertAVL(53)
+// avl.insertAVL(40)
+// list = avl.inOrderTraverse()
+// console.log(avl)
+// console.log('----')
+// for(let p of list) {
+// 	console.log(p, p.meta.bf)
+// }
 
