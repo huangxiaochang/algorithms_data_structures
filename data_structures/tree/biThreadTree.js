@@ -22,7 +22,7 @@ class BiThreadTree {
 	}
 
 	// 二叉树的线索化：中序线索化
-	// 线索化的实质是讲空指针指向前驱或者后序，所以只有在遍历过程中，才能得到前驱和后继，为了记录
+	// 线索化的实质是将空指针指向前驱或者后继，所以只有在遍历过程中，才能得到前驱和后继，为了记录
 	// 访问过的结点的先后顺序，需要设置一个变量指向刚刚访问过的结点
 	inOrderThreading (biTree) {
 		if (!biTree instanceof BinaryTree) {
@@ -152,6 +152,27 @@ class BiThreadTree {
 		return ret.pop()
 	}
 
+	// 中序线索二叉树的遍历
+	inOrderTraverse_Thr(T=this.root) {
+		const ret = []
+		let p = T.left // 指向根节点
+		while (p !== T) { // 空树或者遍历结束时，p == T
+			// 找左树第一个访问节点
+			while (p.meta.LTag === Link) {
+				p = p.left
+			} 
+			ret.push(p)
+			// 访问右指针域为线索的节点
+			while(p.meta.RTag === Thread && p.right !== T) {
+				// 访问后继节点
+				p = p.right
+				ret.push(p)
+			}
+			// 当节点的右指针域不是线索时，访问其右树
+			p = p.right
+		}	
+		return ret
+	}
 }
 
 module.exports = {

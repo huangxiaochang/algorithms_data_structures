@@ -5,9 +5,9 @@ var { BalancedBinaryTree } = require('./balancedBinaryTree.js')
 
 var arrTree = new BinaryTree([1,2,3,4,5,undefined,6,undefined,undefined,7,8])
 
-console.log(arrTree)
+// console.log(arrTree)
 
-console.log(arrTree.inOrderTraverseWithoutRecursive2(), 9999)
+// console.log(arrTree.inOrderTraverseWithoutRecursive2(), 9999)
 
 // var objTree1 = new BinaryTree({
 // 	value: 1,
@@ -46,36 +46,39 @@ console.log(arrTree.inOrderTraverseWithoutRecursive2(), 9999)
 // 	}
 // })
 
-// var objTree3 = new BinaryTree({
-// 	value: '-',
-// 	left: {
-// 		value: '+',
-// 		left: 'a',
-// 		right: {
-// 			value: '*',
-// 			left: 'b',
-// 			right: {
-// 				value: '-',
-// 				left: 'c',
-// 				right: 'd'
-// 			}
-// 		}
-// 	},
-// 	right: {
-// 		value: '/',
-// 		left: 'e',
-// 		right: 'f'
-// 	}
-// })
+var objTree3 = new BinaryTree({
+	value: '-',
+	left: {
+		value: '+',
+		left: 'a',
+		right: {
+			value: '*',
+			left: 'b',
+			right: {
+				value: '-',
+				left: 'c',
+				right: 'd'
+			}
+		}
+	},
+	right: {
+		value: '/',
+		left: 'e',
+		right: 'f'
+	}
+})
 
 // var objTree4 = new BinaryTree()
 
-// var threadTree = new BiThreadTree()
+var threadTree = new BiThreadTree()
 
 // console.log(objTree3.root)
 
-// threadTree.inOrderThreading(objTree3.root)
+threadTree.inOrderThreading(objTree3.root)
+// 线索二叉树
+// console.log(threadTree)
 // console.log(threadTree.inOrderTraverseThr())
+console.log(threadTree.inOrderTraverse_Thr())
 // console.log(threadTree.getPreWithInOrderThr(threadTree.root.left))
 
 var fs = require('fs')
