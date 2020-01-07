@@ -45,3 +45,43 @@ function debounce(fn, delay, immediate) {
 
 	return debounced
 }
+// whistle
+
+// 防抖
+function debounce2(func, wait, options={}) {
+  if (typeof func !== 'function') {
+    throw new TypeError(`${func} is not a function`)
+  }
+  if (typeof wait !== 'number') {
+    throw new TypeError(`${wait} is not a number`)
+  }
+
+  var leading = options.leading || false
+
+  var timer = null
+  
+  return function debounced(...args) {
+    if (timer) {
+      clearTimeout(timer)
+    }
+    var context = this
+    var res = null
+    if (leading) {
+      leading = false
+      res = func.apply(context, args)
+      context = null
+    }
+    // 箭头函数也可以
+    timer = setTimeout(function () {
+      leading = options.leading || false
+      if (!context) {
+      	// wait时间段内只有一次事件并且响应第一次时，不执行
+      	clearTimeout(timer)
+        return
+      }
+      res = func.apply(context, args)
+    }, wait)
+    return res
+  }
+}
+
