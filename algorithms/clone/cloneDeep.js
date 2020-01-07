@@ -6,8 +6,9 @@ function getValType (val) {
 }
 
 function isPrimitiveValue (val) {
-	// 原始值，不包括包装对象,(string, null, undefined, boolean, number, symbol)
-	// WeakSet, WeakMap
+	// 原始值(不包括包装对象): string, null, undefined, boolean, number, symbol
+	// WeakSet, WeakMap.
+	// 如果也需要拷贝symbol类型的值，可以使用Symbol(symbol.description)来实现
 	if (val === null || 
 		!(typeof val === 'object' || typeof val === 'function') ||
 		val instanceof WeakSet ||
@@ -41,13 +42,14 @@ function cloneCannotTraverseObj (obj, valType) {
 					console.log(source, flags, 111)
 					return new RegExp(source, flags)
 		case 'Function':
+					const fnStr = obj.toString()
 					// 函数可以分为箭头函数和普通的函数，为箭头函数时，直接返回即可
 					// 两者的区别是，箭头函数没有原型
 					const isArrowFun = obj.prototype === undefined
 					if (isArrowFun) {
-						return obj
+						// 箭头函数可以使用eval+箭头函数的字符串进行拷贝
+						return eval(fnStr)
 					}
-					const fnStr = obj.toString()
 					
 					let paramsReg = /\((.*?)\)/
 					let params = fnStr.match(paramsReg)
@@ -187,12 +189,13 @@ var obj = {
 	g: undefined,
 	r: new Set([2, {a: 22, b: [3,{y: '66'}]}, Symbol(11)]),
 	h: new Map([['a','09'], [Symbol(22), 444]]),
-	k: Symbol('tt'),
+	k: Symbol('tt'), // 如果也需要Symbol类型值不等，可以使用Symbol(symbol.description)
 	w: new Date(),
 	l: () => {
 		var o = 777
 		return o
-	}
+	},
+	i: new Boolean(false)
 }
 var cobj = cloneDeep(obj)
 
