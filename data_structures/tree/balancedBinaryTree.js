@@ -50,9 +50,6 @@ class BalancedBinaryTree extends BinaryTree {
 		} : false
 	}
 
-	// 有一个序列来创建一颗平衡二叉树
-	
-
 	// 将一个节点插入到平衡二叉树中
 	insertAVL (value, tree=this.root) {
 		if (!this.root) {

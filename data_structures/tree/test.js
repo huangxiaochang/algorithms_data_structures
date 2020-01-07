@@ -78,7 +78,7 @@ threadTree.inOrderThreading(objTree3.root)
 // 线索二叉树
 // console.log(threadTree)
 // console.log(threadTree.inOrderTraverseThr())
-console.log(threadTree.inOrderTraverse_Thr())
+// console.log(threadTree.inOrderTraverse_Thr())
 // console.log(threadTree.getPreWithInOrderThr(threadTree.root.left))
 
 var fs = require('fs')
@@ -100,17 +100,19 @@ function printToFile (filename, obj) {
 // console.log(sortTree.inOrderTraverse())
 // console.log(sortTree.findChild(45))
 
-// var avl = new BalancedBinaryTree()
-// avl.insertAVL(13)
-// avl.insertAVL(24)
-// avl.insertAVL(37)
-// avl.insertAVL(90)
-// avl.insertAVL(53)
+var avl = new BalancedBinaryTree()
+avl.insertAVL(13)
+avl.insertAVL(24)
+avl.insertAVL(37)
+avl.insertAVL(90)
+avl.insertAVL(53)
 // avl.insertAVL(40)
-// list = avl.inOrderTraverse()
-// console.log(avl)
-// console.log('----')
-// for(let p of list) {
-// 	console.log(p, p.meta.bf)
-// }
+list = avl.inOrderTraverse()
+console.log(avl)
+console.log('----')
+// avl.deleteAVL(90)
+for(let p of list) {
+	console.log(p,p.meta.bf)
+}
+
 
