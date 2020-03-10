@@ -19,6 +19,18 @@ function recerive_flatten(arr, res) {
 	return res
 }
 
+function recerive_flatten2(arr) {
+	var res = []
+	for(var i = 0 ; i < arr.length; i++) {
+		if (arr[i] instanceof Array) {
+			res = res.concat(recerive_flatten(arr[i]))
+		} else {
+			res.push(arr[i])
+		}
+	}
+	return res
+}
+
 // 偏平化后的顺序没有保证
 function non_recerive_flatten(arr) {
 	var queue = [arr],
