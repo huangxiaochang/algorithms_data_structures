@@ -24,14 +24,17 @@ function cloneCannotTraverseObj (obj, valType) {
 	const ctor = obj.constructor
 	// 获取基本类型包装对象的基本值
 	const val = Object.prototype.valueOf.call(obj)
+	console.log(val, typeof val)
 
 	switch (valType) {
-		case 'Number':
 		case 'Boolean':
-		case 'String':
 					// 因为new Boolean(false) -> new ctor(obj) => [Boolean: true]
 					// 所以并不能直接使用new ctor(obj)
-					return new ctor(val)
+					var value = val.valueOf()
+					return new Boolean(value)
+		case 'Number':
+		case 'String':
+					// return new ctor(val)
 		case 'Date':
 		case 'Error':
 					return new ctor(obj)
@@ -191,6 +194,9 @@ var obj = {
 	h: new Map([['a','09'], [Symbol(22), 444]]),
 	k: Symbol('tt'), // 如果也需要Symbol类型值不等，可以使用Symbol(symbol.description)
 	w: new Date(),
+	z: new String('22'),
+	y: new Number(777),
+	x: new Boolean(false),
 	l: () => {
 		var o = 777
 		return o
@@ -199,5 +205,5 @@ var obj = {
 }
 var cobj = cloneDeep(obj)
 
-console.log(cobj, cobj === obj, cobj.a === obj.a)
+console.log(cobj, cobj === obj, cobj.a === obj.a, cobj.y === obj.y)
 
