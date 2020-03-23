@@ -1,5 +1,7 @@
 /*
-	快速排序的时间复杂度： nlogn, 最坏为n^2, 最好为nlogn, 稳定性： 不稳定
+	快速排序的时间复杂度： nlogn, 最坏为n^2, 最好为nlogn, 稳定性： 不稳定。
+	快速排序一般比其他o(nlobn)的算法更快，因为它的内部循环可以在大部分的架构上
+	很有效率地被实现出来。
  */
 class QuickSort {
 	constructor(compareFn) {
