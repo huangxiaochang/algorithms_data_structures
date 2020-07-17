@@ -161,8 +161,40 @@ function permutateWithStack (arr) {
 	return permutations
 }
 
+// 回溯算法求解全排序
+function permutateWithBracktrack (arr) {
+	var ret = [];
+	backtrack(arr, [], ret);
+	return ret;
+}
+
+/*
+@params picklist 在回溯树的某个节点时，可选择的分支列表
+@params path 到达回溯树的某个节点时，已经选择的路径
+@params ret 结果
+ */
+function backtrack(picklist, path, ret) {
+	if (picklist.length === 0) {
+		// 如果已经到达了回溯树的底层，结束向下选择
+		ret.push([].concat(path));
+		return;
+	}
+
+	// 从选择列表中进行选择
+	for (let i = 0 ; i < picklist.length; i++) {
+		// 做选择
+		// var new_path = path + picklist[i];
+		path.push(picklist[i]);
+		// 进入向下一层
+		backtrack([].concat(picklist.slice(0, i), picklist.slice(i+1)), path, ret);
+		// 当回溯到该节点时，撤销之前的选择
+		path.pop();
+	}
+}
+
 module.exports = {
 	permutateWithoutRepet,
 	permutateWithRepet,
-	permutateWithStack
+	permutateWithStack,
+	permutateWithBracktrack
 }

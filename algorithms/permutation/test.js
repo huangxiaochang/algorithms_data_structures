@@ -1,4 +1,4 @@
-const { permutateWithoutRepet, permutateWithRepet, permutateWithStack } = require('./permutation.js')
+const { permutateWithoutRepet, permutateWithRepet, permutateWithStack, permutateWithBracktrack } = require('./permutation.js')
 
 let arr = permutateWithoutRepet([1,2,3])
 
@@ -14,3 +14,7 @@ let arr3 = permutateWithStack([1,2,3])
 
 console.log(arr3)
 console.log(arr3.length)
+
+let arr4 = permutateWithBracktrack([1,2,3,4])
+console.log(arr4)
+
