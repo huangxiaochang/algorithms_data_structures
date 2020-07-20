@@ -300,6 +300,19 @@ class linkList {
 		}
 		return arr
 	}
+
+	/*
+	后序遍历链表
+	 */
+	postOrderTraversal (linkHead, visit) {
+		if (linkHead === null) {
+			return;
+		}
+		// 这里前序遍历
+		postOrderTraversal(linkHead.next);
+		// 这里是后序遍历
+		visit(linkHead);
+	}
 }
 
 // export LinkListNode

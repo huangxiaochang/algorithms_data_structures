@@ -91,3 +91,38 @@ function throttle (func, wait, options) {
 
 	return throttled
 }
+
+
+function throttle_fn (fn, delay) {
+	var last_time = null;
+	var timer = null;
+	// 缺点是，最后一次事件得不到响应，所以要设置一个定时器
+	return function throttle (...args) {
+		var now_time = +new Date();
+		var time_differ = now_time - last_time;
+
+		if (timer !== null) {
+			clearTimeout(timer);
+			timer = null;
+		}
+		if (last_time === null || time_differ > delay) {
+			last_time = now_time;
+			return fn.apply(this, args);
+		} 
+		else {
+			var self = this;
+			// // 设置定时器来执行最后一次事件
+			timer = setTimeout(function () {
+				clearTimeout(timer);
+				// 因为在快要达到delay时，设置了定时器，然后很快定时器达到了执行时机，被加入了
+				// 事件循环队列中，然后接下来在delay间隔内再次出发throttle函数的话，该函数是在
+				// 定时器之后执行的，所以不会执行clearTimeout，如果不在这里重置last_time的话，
+				// 会造成满足time_differ > delay条件，所以会造成fn执行多次。
+				last_time = +new Date();
+				return fn.apply(self, args);
+			}, delay - time_differ);
+		}
+	}
+}
+
+
