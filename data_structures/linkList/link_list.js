@@ -45,7 +45,6 @@ class linkList {
 	}
 	/*
 		reverse a linkList
-		反转链表合影使用递归来实现，因为它可以分成多个相似的子问题
 	 */
 	reverse () {
 		// pre用来保存已经反转的链表的head
@@ -58,6 +57,18 @@ class linkList {
 			this.head = last
 		}
 		this.head = pre
+	}
+
+	// 使用递归反转链表
+	reverseRecursion (nd=this.head) {
+		if (nd.next === null) {
+			return nd;
+		}
+		let last = reverseRecursion(nd.next);
+		nd.next.next = nd;
+		nd.next = null;
+		this.head = last;
+		return last;
 	}
 	/*
 		reverse a linkList with k number of node as a group
