@@ -110,6 +110,48 @@ function knapsack_01_3 (costs, n) {
 	return dp[n];
 }
 
+// 求最优方案总数
+function knapsack_group (V, cos) {
+	var dp = [];
+  var gp = [];
+  for (let i = 0 ; i <= cos.length; i++) {
+  	dp[i] = [];
+  	gp[i] = [];
+	  for (let j = 0 ; j <= V; j++) {
+	  	dp[i][j] = 0;
+	  	if (i === 0 || j === 0) {
+	  		gp[i][j] = 1;
+	  	} else {
+	  		gp[i][j] = 0;
+	  	}
+	  }
+  }
+
+  // 完全背包问题
+  // dp定义： dp[i][v] 为把前i种物品放入到容量为v的背包中获得的最大价值
+  for (let i = 1; i <= cos.length; i++) {
+  	let cs = cos[i-1];
+  	for (let v = 1; v <= V; v++) {
+  		if (cs[0] <= v) {
+  			// 如果第i种物品可以放进背包时，那么前i种物品放入v容量的背包的最大价值为：
+  			// 前i-1种物品放入v容量的背包，和前i-1种物品放入v容量加上第i种物品的k件物品的两者的最大值
+  			// 其中dp[i][v-cs[0]]表示前i-1种物品，和v/cs[0]件第i种物品的最大价值
+  			dp[i][v] = Math.max(dp[i-1][v], dp[i][v-cs[0]] + cs[1]);
+  		} else {
+  			// 如果第i中物品放不进背包时,只能为前i-1种物品放入容量为v的最大价值
+  			dp[i][v] = dp[i-1][v];
+  		}
+  		// 求最优解的方案
+  		if (dp[i][v] === dp[i-1][v]) {
+  			gp[i][v] = gp[i][v] + gp[i-1][v];
+  		}
+  		if (dp[i][v] === dp[i][v-cs[0]] + cs[1]) {
+  			gp[i][v] = gp[i][v] + gp[i][v-cs[0]];
+  		}
+  	}
+  }
+}
+
 let res = knapsack_01([[8,15],[7,7]], 16);
 console.log(res);
 let res3 = knapsack_01_3([[8,15],[7,7]], 16);
