@@ -25,3 +25,5 @@ module.exports = {
 	defaultCompareFn,
 	getValueType
 }
+
+// test
